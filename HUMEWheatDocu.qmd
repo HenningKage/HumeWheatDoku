@@ -1,0 +1,260 @@
+---
+title: "Simulation of Wheat Growth and Development"
+author: "Agronomy and Crop Science Group, Kiel University"
+date: "`r Sys.Date()`"
+bibliography: bibliography.bibtex.bib
+csl: european-journal-of-agronomy.csl
+chunk_output_type: console
+html-math-method: katex
+number-sections: true
+toc: true
+toc-expand: 4
+toc-depth: 4
+toc-location: left
+crossref:
+  eq-prefix: Eq.
+format:
+ html:
+  mermaid:
+    theme: neutral
+---
+
+```{css}
+#| echo: false
+p {
+  text-align: justify
+}
+```
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+rm(list = ls(all.names = TRUE))
+
+library(rmarkdown)
+library(bookdown)
+library(soilwater)
+library(pracma)
+library(dplyr)
+library(ggplot2)
+library(extrafont)
+library(gifski)
+library(gganimate)
+library(transformr)
+library(reticulate)
+library(tinytex)
+library(magick)
+library(bibtex)
+library(ggsci)
+library(knitcitations)
+library(kableExtra)
+
+options("citation_format" = "pandoc")
+
+
+```
+
+The process-oriented dynamic model runs on daily time steps. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
+
+# Plant
+
+## Development
+
+The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage ([@lancashire1991a]). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
+
++---------+---------+----------------------------------------------------------------------------------+
+| GS      | BBCH    | Phase                                                                            |
++=========+=========+==================================================================================+
+| 7       | 00      | Fallow                                                                           |
++---------+---------+----------------------------------------------------------------------------------+
+| 8       | 00      | Sowing to germination                                                            |
++---------+---------+----------------------------------------------------------------------------------+
+| 9       | 05      | Germination to emergence                                                         |
++---------+---------+----------------------------------------------------------------------------------+
+| 1       | 10      | Emergence to terminal Spikelet initiation                                        |
++---------+---------+----------------------------------------------------------------------------------+
+| 2       | 30      | Terminal spikelet to end of leaf growth and beginning of ear growth              |
++---------+---------+----------------------------------------------------------------------------------+
+| 3       | 40      | End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth |
++---------+---------+----------------------------------------------------------------------------------+
+| 4       | 57      | End of pre-anthesis ear growth to beginning of grain filling                     |
++---------+---------+----------------------------------------------------------------------------------+
+| 5       | 71      | Grain filling                                                                    |
++---------+---------+----------------------------------------------------------------------------------+
+| 6       | 90      | End of grain filling to harvest                                                  |
++---------+---------+----------------------------------------------------------------------------------+
+
+: Development stages of the CW model (GS) and corresponding BBCH stages {#tbl-CWDevStages}
+
+The CW model mainly describes phenological development through the change of GS over time. In CWm we added an explicit simulation of three additional state variables, the leaf number on the main stem (nLMS), the number of initiated leaves on the main stem (inLMS) and the BBCH stage. At emergence nLMS is set to one and inLMS is set to 4 [@brooking2002a]. This is because the embryo at the time of sowing has already three leaf primordia [@kirby1985] and that an additional primordium is assumed to be produced until emergence. The rate of change of number of initiated leaves is calculated according to Equ. (@eq-dinLMS) from emergence until the last leaf primordium is formed:
+
+$$
+\frac{d\,in{{L}_{MS}}}{dt}=\frac{\max
+(0,T-{{T}_{b}})}{Plast}
+$$ {#eq-dinLMS}
+
+Where Plast is the plastochron (°Cd) T is the air temperature and T~b~ is the base temperature. The formation of leaf primordia which produce leaves is finished some time before the double ridge stage (Bonnet, 1935; Bonnet, 1936; Muschik, 1957). The time of the cessation of leaf primordia initiation, however, is not exactly coupled to a certain GS in the CW model and is also not linked to a certain BBCH stage. From available data of BBCH 37, i.e. the time when the last leaf appears, it was possible to estimate an approximate GS corresponding to the formation of the final leaf primordium ($GS_{flp}$) ‘ex post’. The number of visible leaves on the main stem nLMS is calculated accordingly (@eq-dnLMS):
+
+$$\frac{d\,n{{L}_{MS}}}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll}$$ {#eq-dnLMS}
+
+where Phyll denotes the phyllochron (°Cd).
+
+## Calculation of changes of GS and BBCH
+
+The main state variables of the phenological model are the GS-stage according to Ritchie and the BBCH-stage more commonly used in the description of wheat phenology. Their rate of change is calculated stage specific.
+
+### Sowing to emergence (GS 8 and 9)
+
+We simplified the model by pooling together the GS stages eight and nine, which represent the germination and emergence processes, because no data were available to distinguish between both events. The redefined parameter P9, which now governs the rate of development during the time from sowing to emergence, was calculated from observed thermal times from sowing to emergence .
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{P9}$$
+
+The rate of change for BBCH is ten time higher as for GS as the event of crop emergence is equivalent to 10.
+
+$$\frac{dBBCH}{dt}=10\frac{\max (0,T-{{T}_{b}})}{P9}$$
+
+### Emergence to terminal Spikelet initiation (GS 1)
+
+Temperature, vernalization, photoperiod, and phyllochron interval determine the development rate during GS 1. According to CW the lowest value of two functions, depending on the vernalization stage and the actual photoperiod in interaction with the actual effective temperature limits the development rate (@eq-dGS_dt_GS1).
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})\cdot \min (f(V),f(P))}{(400\cdot Phyll\ /\ 95)}$$ {#eq-dGS_dt_GS1}
+
+The functions f(V) and f(P) as well as the Phyllocron (Phyll) are genotype specific.
+
+The effect of vernalisation on the development rate is calculated from the accumulated sum of "vernalisation days". The rate of change of the vernalisation days is calculated from the daily mean temperature and a vernalisation response function which is characterized by 4 cardinal temperatures (@fig-RelVernalisation).
+
+![RelVernalisation](RelVernalisation.png){#fig-RelVernalisation}
+
+At early development stages (BBCH\<30) BBCH stages are determined by the number of leaves and tillers present. Their rate of change is determined by the Phyllochron (Phyll), i.e. the inverse of the phyllochron is the emergence rate of leaves and tillers per effective day temperature (\@eq-dBBCH_dt_GS1).
+
+At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appearance of the fourth leaf the first tiller is emerging and mainstem leaf appearance is then associated with tiller appearance until BBCH 30. $$\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll}$$ {#eq-dBBCH_dt_GS1}
+
+### Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)
+
+Within the model the implicit and simplifying assumption is made that GS 2 stage is more or less closely associated with BBCH 30 [@baker1983][@baker1983], but that the initiation of the terminal leaf primordium may be reached a bit earlier at a stage we named ($GS_{flp}$).
+
+The GS change rate between GS 2 and 3 is calculated as the ratio of the daily temperature minus the base temperature (T~b~, assumed to be 0°C) to the thermal time interval GS 2 to GS 3. This thermal time interval is calculated by the number of leaves not yet expressed at GS 2 minus two (fL), multiplied by the phyllochron plus the temperature sum between BBCH 37 and 39, i.e. ‘PH39’:.
+
+## 
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39}$$ {#eq-dGS_dt_GS2}
+
+= inL_MS-2- nL_MS, fL fixed at GS=2
+
+In the CWm model we therefore calculated a rate of node emission and introduced a parameter we called ‘TSumInternode’ analogous to the phyllochron. The numerical value of this parameter is the inverse of the slope of the relation of node numbers to the temperature sum from BBCH 30. The rate of change of BBCH stages is calculated until BBCH 37 (final leaf begins to emerge) from the ratio of the effective day temperature and TSumInternode (\@eq-dBBCH_dt_GS1).
+
+The BBCH stage 37 is reached when the number of the emerged leaves is equal to the number of leaf primordia minus two. The subtraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia [@griffiths1985].
+
+The length of the thermal time from sowing to the initiation of the last leaf primordium together with the plastochron now determines the number of initiated leaves. This number is variable and the new algorithm of CWm therefore also predicts a variable length of GS 2 in terms of temperature sum. In CWm the rate of development between BBCH 37 and BBCH 39, however, is again described by a certain temperature sum expressed as the newly added parameter ‘PH39’ (\@eq-dBBCH_dt_GS2b). It was introduced because according to our data analysis the thermal time between BBCH 37 and 39 ratings was significantly longer than one phyllochron.
+
+$$\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{\text{TSumInternode}}$$ {#eq-dBBCH_dt_GS2a}
+
+If nL_MS \> inL_MS-2 and If BBCH\< 37 then BBCH = 37 If BBCH\>=37:
+
+$$
+  \frac{dBBCH}{dt}= \min \left( \frac{2\max (0,T-{{T}_{b}})}{\text{Ph39}},(40-BBCH) \right)
+$$ {#eq-dBBCH_dt_GS2b}
+
+## Growth
+
+```{mermaid}
+%%| fig-cap: diagram caption
+%%| fig-align: center
+
+flowchart LR
+  A(RUEpot) -.-> F
+  C(ftemperatureLUE) -.-> A
+  D(fdroughtLUE) -.-> A
+  E(Q) --> F{dW/dt}
+  F --> B[DM]
+  
+```
+
+### Dry Matter Partitioning
+
+### Canopy
+
+#### Leaf Area Development
+
+#### Senescence
+
+### Ressource Limitations
+
+#### Nitrogen
+
+#### Water
+
+## Evapotranspiration
+
+# Soil water
+
+# Implementation
+
+The model was implemented using an object oriented component library termed HUME [@kage1999] on the basis of Embarcadero® Delphi® 2010 (Embarcadero Technologies, Inc., USA). The model is comprised of submodels describing plant growth and development, soil water dynamics, and evapotranspiration.
+
+# Miscellaneous
+
+Temperature depended processes are calculated generally using an effective temperature *(T~eff~)* \[°C\], which is the mean daily air temperature \[°C\] *(T~air~)* minus a base temperature *(T~base~ = 2 °C)* (@eq-effective-temperature).
+
+$$T_{eff}  = \begin{cases}
+T_{air} - T_{base} & \text{if}~T>0\\ 
+0 & \text{if}~T<2
+\end{cases}$$ {#eq-effective-temperature}
+
+# Parameters
+
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| Parameter     | Unit                  | Description                                                  | Value dissertation Bangemann | Fitted value 2022/2023         |
++===============+=======================+==============================================================+==============================+================================+
+| ftia          | \[-\]                 | timing of tuber initiation                                   | 0.0014                       | ?                              |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| ftib          | \[-\]                 | timing of tuber initiation                                   | 0.00039                      | ?                              |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| mart          | \[-\]                 | Dutch maturity groups (range: 2.5 - 9.5)                     | \-                           | \-                             |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| fta           | \[-\]                 | Gompertz function (value of upper asymptote)                 | 1.07                         | 1.0292                         |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| ftb           | \[-\]                 | Gompertz function                                            | 124.69                       | 128.6411                       |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| TSUM~tub0~    | \[-\]                 | Gompertz function                                            | 143.659                      | 107.5675                       |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| vf1           | \[%\]                 | N concentration at 1 g DM m^-^² (N-dilution curve)           | 82.34                        | 29.0418 (only 2022)            |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| vf2           | \[-\]                 | coefficient of dilution (N-dilution curve)                   | -0.5641                      | -0.40285 (only 2022)           |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| DMshoot~crit~ | \[g DM~total~ m^-2^\] | DM~total~ until which N concentration remains at maximum     | 121.213                      | \- (not enough data available) |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| NmaxShoot     | \[%\]                 | maximum of N-concentration                                   | 5                            | \- (not enough data available) |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| dlh           | \[-\]                 | allometric equation of DM~stem~ and DM~leaf~                 | -1.87                        | 2022: -2.30397                 |
+|               |                       |                                                              |                              |                                |
+|               |                       |                                                              |                              | 2023: -2.9235                  |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| dlb           | \[-\]                 | allometric equation of DM~stem~ and DM~leaf~                 | 1.18                         | 2022: 1.277                    |
+|               |                       |                                                              |                              |                                |
+|               |                       |                                                              |                              | 2023: 1.612                    |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| SLA~fix~      | \[m^2^ g^-1^\]        | specific leaf area if no drought stress occurs               | 0.028                        | 2022: ca. 0.022                |
+|               |                       |                                                              |                              |                                |
+|               |                       |                                                              |                              | 2023: ca. 0.045                |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| LAIe~a~       | \[-\]                 | early leaf area development                                  | 0.0006                       | \- (not enough data available) |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| LAIe~b~       | \[-\]                 | early leaf area development                                  | 1.2                          | \- (not enough data available) |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| LAIcrit       | \[m^2^ m^-2^\]        | critical value until which LAI is determined by thermal time | 0.75 (literature)            | (better fit with lower value)  |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| kz~b~         | \[cm d^-1^ °C\]       | linear increase of root depth                                | 0.1                          | 0.05                           |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| zr~max~       | \[cm\]                | maximum rooting depth                                        | 60                           | 80                             |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| T~baseroot~   | \[°C\]                | base temperature of root growth                              | 0                            | 8                              |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| Rdv~a~        | \[-\]                 | senescence due to developmental ageing                       | -11.7                        |                                |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| Rdv~b~        | \[-\]                 | senescence due to developmental ageing                       | 0.48                         |                                |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| Rdv~d~        | \[-\]                 | senescence due to developmental ageing                       | 0.0005                       |                                |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+| Rdv~e~        | \[-\]                 | senescence due to developmental ageing                       | 900                          |                                |
++---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+

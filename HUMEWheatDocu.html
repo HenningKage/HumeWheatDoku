@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.547">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Agronomy and Crop Science Group, Kiel University">
+<meta name="dcterms.date" content="2024-01-27">
+
+<title>Simulation of Wheat Growth and Development</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="HUMEWheatDocu_files/libs/clipboard/clipboard.min.js"></script>
+<script src="HUMEWheatDocu_files/libs/quarto-html/quarto.js"></script>
+<script src="HUMEWheatDocu_files/libs/quarto-html/popper.min.js"></script>
+<script src="HUMEWheatDocu_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="HUMEWheatDocu_files/libs/quarto-html/anchor.min.js"></script>
+<link href="HUMEWheatDocu_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="HUMEWheatDocu_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="HUMEWheatDocu_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="HUMEWheatDocu_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="HUMEWheatDocu_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<meta name="mermaid-theme" content="neutral">
+<script src="HUMEWheatDocu_files/libs/quarto-diagram/mermaid.min.js"></script>
+<script src="HUMEWheatDocu_files/libs/quarto-diagram/mermaid-init.js"></script>
+<link href="HUMEWheatDocu_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="4">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#plant" id="toc-plant" class="nav-link active" data-scroll-target="#plant"><span class="header-section-number">1</span> Plant</a>
+  <ul>
+  <li><a href="#development" id="toc-development" class="nav-link" data-scroll-target="#development"><span class="header-section-number">1.1</span> Development</a></li>
+  <li><a href="#calculation-of-changes-of-gs-and-bbch" id="toc-calculation-of-changes-of-gs-and-bbch" class="nav-link" data-scroll-target="#calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.2</span> Calculation of changes of GS and BBCH</a>
+  <ul class="collapse">
+  <li><a href="#sowing-to-emergence-gs-8-and-9" id="toc-sowing-to-emergence-gs-8-and-9" class="nav-link" data-scroll-target="#sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.2.1</span> Sowing to emergence (GS 8 and 9)</a></li>
+  <li><a href="#emergence-to-terminal-spikelet-initiation-gs-1" id="toc-emergence-to-terminal-spikelet-initiation-gs-1" class="nav-link" data-scroll-target="#emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.2.2</span> Emergence to terminal Spikelet initiation (GS 1)</a></li>
+  <li><a href="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" id="toc-terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="nav-link" data-scroll-target="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.2.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</a></li>
+  </ul></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">1.3</span> </a></li>
+  <li><a href="#growth" id="toc-growth" class="nav-link" data-scroll-target="#growth"><span class="header-section-number">1.4</span> Growth</a>
+  <ul class="collapse">
+  <li><a href="#dry-matter-partitioning" id="toc-dry-matter-partitioning" class="nav-link" data-scroll-target="#dry-matter-partitioning"><span class="header-section-number">1.4.1</span> Dry Matter Partitioning</a></li>
+  <li><a href="#canopy" id="toc-canopy" class="nav-link" data-scroll-target="#canopy"><span class="header-section-number">1.4.2</span> Canopy</a>
+  <ul class="collapse">
+  <li><a href="#leaf-area-development" id="toc-leaf-area-development" class="nav-link" data-scroll-target="#leaf-area-development"><span class="header-section-number">1.4.2.1</span> Leaf Area Development</a></li>
+  <li><a href="#senescence" id="toc-senescence" class="nav-link" data-scroll-target="#senescence"><span class="header-section-number">1.4.2.2</span> Senescence</a></li>
+  </ul></li>
+  <li><a href="#ressource-limitations" id="toc-ressource-limitations" class="nav-link" data-scroll-target="#ressource-limitations"><span class="header-section-number">1.4.3</span> Ressource Limitations</a>
+  <ul class="collapse">
+  <li><a href="#nitrogen" id="toc-nitrogen" class="nav-link" data-scroll-target="#nitrogen"><span class="header-section-number">1.4.3.1</span> Nitrogen</a></li>
+  <li><a href="#water" id="toc-water" class="nav-link" data-scroll-target="#water"><span class="header-section-number">1.4.3.2</span> Water</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#evapotranspiration" id="toc-evapotranspiration" class="nav-link" data-scroll-target="#evapotranspiration"><span class="header-section-number">1.5</span> Evapotranspiration</a></li>
+  </ul></li>
+  <li><a href="#soil-water" id="toc-soil-water" class="nav-link" data-scroll-target="#soil-water"><span class="header-section-number">2</span> Soil water</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">3</span> Implementation</a></li>
+  <li><a href="#miscellaneous" id="toc-miscellaneous" class="nav-link" data-scroll-target="#miscellaneous"><span class="header-section-number">4</span> Miscellaneous</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters"><span class="header-section-number">5</span> Parameters</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Simulation of Wheat Growth and Development</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Agronomy and Crop Science Group, Kiel University </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 27, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<style type="text/css">
+p {
+  text-align: justify
+}
+</style>
+</div>
+<p>The process-oriented dynamic model runs on daily time steps. Required external data inputs are the mean daily temperature [°C], precipitation [mm&nbsp;d<sup>-1</sup>], global radiation [W&nbsp;m<sup>-2</sup>], wind speed [m&nbsp;s<sup>-1</sup>], relative humidity [%] and values derived from these like vapor pressure [mbar] and saturation deficit [mbar].</p>
+<section id="plant" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Plant</h1>
+<section id="development" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="development"><span class="header-section-number">1.1</span> Development</h2>
+<p>The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in <span class="citation" data-cites="johnen2012">(<a href="#ref-johnen2012" role="doc-biblioref">Johnen et al., 2012</a>)</span>. The phenological process in CW is divided into nine developmental or growth stages (GS) according to <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span> (<a href="#tbl-CWDevStages" class="quarto-xref">Table&nbsp;1</a>), the common approach in Europe, however is the BBCH stage (<span class="citation" data-cites="lancashire1991a">(<a href="#ref-lancashire1991a" role="doc-biblioref">LANCASHIRE et al., 1991</a>)</span>). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.</p>
+<div id="tbl-CWDevStages" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-CWDevStages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH stages
+</figcaption>
+<div aria-describedby="tbl-CWDevStages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 79%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>GS</th>
+<th>BBCH</th>
+<th>Phase</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>7</td>
+<td>00</td>
+<td>Fallow</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>00</td>
+<td>Sowing to germination</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>05</td>
+<td>Germination to emergence</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>10</td>
+<td>Emergence to terminal Spikelet initiation</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>30</td>
+<td>Terminal spikelet to end of leaf growth and beginning of ear growth</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>40</td>
+<td>End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>57</td>
+<td>End of pre-anthesis ear growth to beginning of grain filling</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>71</td>
+<td>Grain filling</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td>90</td>
+<td>End of grain filling to harvest</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The CW model mainly describes phenological development through the change of GS over time. In CWm we added an explicit simulation of three additional state variables, the leaf number on the main stem (nLMS), the number of initiated leaves on the main stem (inLMS) and the BBCH stage. At emergence nLMS is set to one and inLMS is set to 4 <span class="citation" data-cites="brooking2002a">(<a href="#ref-brooking2002a" role="doc-biblioref">Brooking and Jamieson, 2002</a>)</span>. This is because the embryo at the time of sowing has already three leaf primordia <span class="citation" data-cites="kirby1985">(<a href="#ref-kirby1985" role="doc-biblioref">KIRBY et al., 1985</a>)</span> and that an additional primordium is assumed to be produced until emergence. The rate of change of number of initiated leaves is calculated according to Equ. (<a href="#eq-dinLMS" class="quarto-xref">Eq.&nbsp;1</a>) from emergence until the last leaf primordium is formed:</p>
+<p><span id="eq-dinLMS"><span class="math display">
+\frac{d\,in{{L}_{MS}}}{dt}=\frac{\max
+(0,T-{{T}_{b}})}{Plast}
+\tag{1}</span></span></p>
+<p>Where Plast is the plastochron (°Cd) T is the air temperature and T<sub>b</sub> is the base temperature. The formation of leaf primordia which produce leaves is finished some time before the double ridge stage (Bonnet, 1935; Bonnet, 1936; Muschik, 1957). The time of the cessation of leaf primordia initiation, however, is not exactly coupled to a certain GS in the CW model and is also not linked to a certain BBCH stage. From available data of BBCH 37, i.e.&nbsp;the time when the last leaf appears, it was possible to estimate an approximate GS corresponding to the formation of the final leaf primordium (<span class="math inline">GS_{flp}</span>) ‘ex post’. The number of visible leaves on the main stem nLMS is calculated accordingly (<a href="#eq-dnLMS" class="quarto-xref">Eq.&nbsp;2</a>):</p>
+<p><span id="eq-dnLMS"><span class="math display">\frac{d\,n{{L}_{MS}}}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll} \tag{2}</span></span></p>
+<p>where Phyll denotes the phyllochron (°Cd).</p>
+</section>
+<section id="calculation-of-changes-of-gs-and-bbch" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.2</span> Calculation of changes of GS and BBCH</h2>
+<p>The main state variables of the phenological model are the GS-stage according to Ritchie and the BBCH-stage more commonly used in the description of wheat phenology. Their rate of change is calculated stage specific.</p>
+<section id="sowing-to-emergence-gs-8-and-9" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.2.1</span> Sowing to emergence (GS 8 and 9)</h3>
+<p>We simplified the model by pooling together the GS stages eight and nine, which represent the germination and emergence processes, because no data were available to distinguish between both events. The redefined parameter P9, which now governs the rate of development during the time from sowing to emergence, was calculated from observed thermal times from sowing to emergence .</p>
+<p><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{P9}</span></p>
+<p>The rate of change for BBCH is ten time higher as for GS as the event of crop emergence is equivalent to 10.</p>
+<p><span class="math display">\frac{dBBCH}{dt}=10\frac{\max (0,T-{{T}_{b}})}{P9}</span></p>
+</section>
+<section id="emergence-to-terminal-spikelet-initiation-gs-1" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.2.2</span> Emergence to terminal Spikelet initiation (GS 1)</h3>
+<p>Temperature, vernalization, photoperiod, and phyllochron interval determine the development rate during GS 1. According to CW the lowest value of two functions, depending on the vernalization stage and the actual photoperiod in interaction with the actual effective temperature limits the development rate (<a href="#eq-dGS_dt_GS1" class="quarto-xref">Eq.&nbsp;3</a>).</p>
+<p><span id="eq-dGS_dt_GS1"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})\cdot \min (f(V),f(P))}{(400\cdot Phyll\ /\ 95)} \tag{3}</span></span></p>
+<p>The functions f(V) and f(P) as well as the Phyllocron (Phyll) are genotype specific.</p>
+<p>The effect of vernalisation on the development rate is calculated from the accumulated sum of “vernalisation days”. The rate of change of the vernalisation days is calculated from the daily mean temperature and a vernalisation response function which is characterized by 4 cardinal temperatures (<a href="#fig-RelVernalisation" class="quarto-xref">Figure&nbsp;1</a>).</p>
+<div id="fig-RelVernalisation" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-RelVernalisation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="RelVernalisation.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-RelVernalisation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: RelVernalisation
+</figcaption>
+</figure>
+</div>
+<p>At early development stages (BBCH&lt;30) BBCH stages are determined by the number of leaves and tillers present. Their rate of change is determined by the Phyllochron (Phyll), i.e.&nbsp;the inverse of the phyllochron is the emergence rate of leaves and tillers per effective day temperature (@eq-dBBCH_dt_GS1).</p>
+<p>At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appearance of the fourth leaf the first tiller is emerging and mainstem leaf appearance is then associated with tiller appearance until BBCH 30. <span id="eq-dBBCH_dt_GS1"><span class="math display">\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll} \tag{4}</span></span></p>
+</section>
+<section id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.2.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</h3>
+<p>Within the model the implicit and simplifying assumption is made that GS 2 stage is more or less closely associated with BBCH 30 [<span class="citation" data-cites="baker1983">Baker and Gallagher (<a href="#ref-baker1983" role="doc-biblioref">1983</a>)</span>]<span class="citation" data-cites="baker1983">(<a href="#ref-baker1983" role="doc-biblioref">Baker and Gallagher, 1983</a>)</span>, but that the initiation of the terminal leaf primordium may be reached a bit earlier at a stage we named (<span class="math inline">GS_{flp}</span>).</p>
+<p>The GS change rate between GS 2 and 3 is calculated as the ratio of the daily temperature minus the base temperature (T<sub>b</sub>, assumed to be 0°C) to the thermal time interval GS 2 to GS 3. This thermal time interval is calculated by the number of leaves not yet expressed at GS 2 minus two (fL), multiplied by the phyllochron plus the temperature sum between BBCH 37 and 39, i.e.&nbsp;‘PH39’:.</p>
+</section>
+</section>
+<section id="section" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="section"><span class="header-section-number">1.3</span> </h2>
+<p><span id="eq-dGS_dt_GS2"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39} \tag{5}</span></span></p>
+<p>= inL_MS-2- nL_MS, fL fixed at GS=2</p>
+<p>In the CWm model we therefore calculated a rate of node emission and introduced a parameter we called ‘TSumInternode’ analogous to the phyllochron. The numerical value of this parameter is the inverse of the slope of the relation of node numbers to the temperature sum from BBCH 30. The rate of change of BBCH stages is calculated until BBCH 37 (final leaf begins to emerge) from the ratio of the effective day temperature and TSumInternode (@eq-dBBCH_dt_GS1).</p>
+<p>The BBCH stage 37 is reached when the number of the emerged leaves is equal to the number of leaf primordia minus two. The subtraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia <span class="citation" data-cites="griffiths1985">(<a href="#ref-griffiths1985" role="doc-biblioref">GRIFFITHS et al., 1985</a>)</span>.</p>
+<p>The length of the thermal time from sowing to the initiation of the last leaf primordium together with the plastochron now determines the number of initiated leaves. This number is variable and the new algorithm of CWm therefore also predicts a variable length of GS 2 in terms of temperature sum. In CWm the rate of development between BBCH 37 and BBCH 39, however, is again described by a certain temperature sum expressed as the newly added parameter ‘PH39’ (@eq-dBBCH_dt_GS2b). It was introduced because according to our data analysis the thermal time between BBCH 37 and 39 ratings was significantly longer than one phyllochron.</p>
+<p><span id="eq-dBBCH_dt_GS2a"><span class="math display">\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{\text{TSumInternode}} \tag{6}</span></span></p>
+<p>If nL_MS &gt; inL_MS-2 and If BBCH&lt; 37 then BBCH = 37 If BBCH&gt;=37:</p>
+<p><span id="eq-dBBCH_dt_GS2b"><span class="math display">
+  \frac{dBBCH}{dt}= \min \left( \frac{2\max (0,T-{{T}_{b}})}{\text{Ph39}},(40-BBCH) \right)
+\tag{7}</span></span></p>
+</section>
+<section id="growth" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="growth"><span class="header-section-number">1.4</span> Growth</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A(RUEpot) -.-&gt; F
+  C(ftemperatureLUE) -.-&gt; A
+  D(fdroughtLUE) -.-&gt; A
+  E(Q) --&gt; F{dW/dt}
+  F --&gt; B[DM]
+  
+</pre>
+</div>
+<p></p><figcaption> diagram caption</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<section id="dry-matter-partitioning" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="dry-matter-partitioning"><span class="header-section-number">1.4.1</span> Dry Matter Partitioning</h3>
+</section>
+<section id="canopy" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="canopy"><span class="header-section-number">1.4.2</span> Canopy</h3>
+<section id="leaf-area-development" class="level4" data-number="1.4.2.1">
+<h4 data-number="1.4.2.1" class="anchored" data-anchor-id="leaf-area-development"><span class="header-section-number">1.4.2.1</span> Leaf Area Development</h4>
+</section>
+<section id="senescence" class="level4" data-number="1.4.2.2">
+<h4 data-number="1.4.2.2" class="anchored" data-anchor-id="senescence"><span class="header-section-number">1.4.2.2</span> Senescence</h4>
+</section>
+</section>
+<section id="ressource-limitations" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="ressource-limitations"><span class="header-section-number">1.4.3</span> Ressource Limitations</h3>
+<section id="nitrogen" class="level4" data-number="1.4.3.1">
+<h4 data-number="1.4.3.1" class="anchored" data-anchor-id="nitrogen"><span class="header-section-number">1.4.3.1</span> Nitrogen</h4>
+</section>
+<section id="water" class="level4" data-number="1.4.3.2">
+<h4 data-number="1.4.3.2" class="anchored" data-anchor-id="water"><span class="header-section-number">1.4.3.2</span> Water</h4>
+</section>
+</section>
+</section>
+<section id="evapotranspiration" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="evapotranspiration"><span class="header-section-number">1.5</span> Evapotranspiration</h2>
+</section>
+</section>
+<section id="soil-water" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Soil water</h1>
+</section>
+<section id="implementation" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Implementation</h1>
+<p>The model was implemented using an object oriented component library termed HUME <span class="citation" data-cites="kage1999">(<a href="#ref-kage1999" role="doc-biblioref">Kage and Stützel, 1999</a>)</span> on the basis of Embarcadero® Delphi® 2010 (Embarcadero Technologies, Inc., USA). The model is comprised of submodels describing plant growth and development, soil water dynamics, and evapotranspiration.</p>
+</section>
+<section id="miscellaneous" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Miscellaneous</h1>
+<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;8</a>).</p>
+<p><span id="eq-effective-temperature"><span class="math display">T_{eff}  = \begin{cases}
+T_{air} - T_{base} &amp; \text{if}~T&gt;0\\
+0 &amp; \text{if}~T&lt;2
+\end{cases} \tag{8}</span></span></p>
+</section>
+<section id="parameters" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Parameters</h1>
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 14%">
+<col style="width: 37%">
+<col style="width: 18%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Unit</th>
+<th>Description</th>
+<th>Value dissertation Bangemann</th>
+<th>Fitted value 2022/2023</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ftia</td>
+<td>[-]</td>
+<td>timing of tuber initiation</td>
+<td>0.0014</td>
+<td>?</td>
+</tr>
+<tr class="even">
+<td>ftib</td>
+<td>[-]</td>
+<td>timing of tuber initiation</td>
+<td>0.00039</td>
+<td>?</td>
+</tr>
+<tr class="odd">
+<td>mart</td>
+<td>[-]</td>
+<td>Dutch maturity groups (range: 2.5 - 9.5)</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>fta</td>
+<td>[-]</td>
+<td>Gompertz function (value of upper asymptote)</td>
+<td>1.07</td>
+<td>1.0292</td>
+</tr>
+<tr class="odd">
+<td>ftb</td>
+<td>[-]</td>
+<td>Gompertz function</td>
+<td>124.69</td>
+<td>128.6411</td>
+</tr>
+<tr class="even">
+<td>TSUM<sub>tub0</sub></td>
+<td>[-]</td>
+<td>Gompertz function</td>
+<td>143.659</td>
+<td>107.5675</td>
+</tr>
+<tr class="odd">
+<td>vf1</td>
+<td>[%]</td>
+<td>N concentration at 1 g DM m<sup>-</sup>² (N-dilution curve)</td>
+<td>82.34</td>
+<td>29.0418 (only 2022)</td>
+</tr>
+<tr class="even">
+<td>vf2</td>
+<td>[-]</td>
+<td>coefficient of dilution (N-dilution curve)</td>
+<td>-0.5641</td>
+<td>-0.40285 (only 2022)</td>
+</tr>
+<tr class="odd">
+<td>DMshoot<sub>crit</sub></td>
+<td>[g DM<sub>total</sub> m<sup>-2</sup>]</td>
+<td>DM<sub>total</sub> until which N concentration remains at maximum</td>
+<td>121.213</td>
+<td>- (not enough data available)</td>
+</tr>
+<tr class="even">
+<td>NmaxShoot</td>
+<td>[%]</td>
+<td>maximum of N-concentration</td>
+<td>5</td>
+<td>- (not enough data available)</td>
+</tr>
+<tr class="odd">
+<td>dlh</td>
+<td>[-]</td>
+<td>allometric equation of DM<sub>stem</sub> and DM<sub>leaf</sub></td>
+<td>-1.87</td>
+<td><p>2022: -2.30397</p>
+<p>2023: -2.9235</p></td>
+</tr>
+<tr class="even">
+<td>dlb</td>
+<td>[-]</td>
+<td>allometric equation of DM<sub>stem</sub> and DM<sub>leaf</sub></td>
+<td>1.18</td>
+<td><p>2022: 1.277</p>
+<p>2023: 1.612</p></td>
+</tr>
+<tr class="odd">
+<td>SLA<sub>fix</sub></td>
+<td>[m<sup>2</sup> g<sup>-1</sup>]</td>
+<td>specific leaf area if no drought stress occurs</td>
+<td>0.028</td>
+<td><p>2022: ca. 0.022</p>
+<p>2023: ca. 0.045</p></td>
+</tr>
+<tr class="even">
+<td>LAIe<sub>a</sub></td>
+<td>[-]</td>
+<td>early leaf area development</td>
+<td>0.0006</td>
+<td>- (not enough data available)</td>
+</tr>
+<tr class="odd">
+<td>LAIe<sub>b</sub></td>
+<td>[-]</td>
+<td>early leaf area development</td>
+<td>1.2</td>
+<td>- (not enough data available)</td>
+</tr>
+<tr class="even">
+<td>LAIcrit</td>
+<td>[m<sup>2</sup> m<sup>-2</sup>]</td>
+<td>critical value until which LAI is determined by thermal time</td>
+<td>0.75 (literature)</td>
+<td>(better fit with lower value)</td>
+</tr>
+<tr class="odd">
+<td>kz<sub>b</sub></td>
+<td>[cm d<sup>-1</sup> °C]</td>
+<td>linear increase of root depth</td>
+<td>0.1</td>
+<td>0.05</td>
+</tr>
+<tr class="even">
+<td>zr<sub>max</sub></td>
+<td>[cm]</td>
+<td>maximum rooting depth</td>
+<td>60</td>
+<td>80</td>
+</tr>
+<tr class="odd">
+<td>T<sub>baseroot</sub></td>
+<td>[°C]</td>
+<td>base temperature of root growth</td>
+<td>0</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>Rdv<sub>a</sub></td>
+<td>[-]</td>
+<td>senescence due to developmental ageing</td>
+<td>-11.7</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Rdv<sub>b</sub></td>
+<td>[-]</td>
+<td>senescence due to developmental ageing</td>
+<td>0.48</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Rdv<sub>d</sub></td>
+<td>[-]</td>
+<td>senescence due to developmental ageing</td>
+<td>0.0005</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Rdv<sub>e</sub></td>
+<td>[-]</td>
+<td>senescence due to developmental ageing</td>
+<td>900</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-baker1983" class="csl-entry" role="listitem">
+Baker, C.K., Gallagher, J.N., 1983. The development of winter wheat in the field. 1. Relation between apical development and plant morphology within and between seasons. The Journal of Agricultural Science 101, 327–335. <a href="https://doi.org/10.1017/s0021859600037631">https://doi.org/10.1017/s0021859600037631</a>
+</div>
+<div id="ref-brooking2002a" class="csl-entry" role="listitem">
+Brooking, I.R., Jamieson, P.D., 2002. Temperature and photoperiod response of vernalization in near-isogenic lines of wheat. Field Crops Research 79, 21–38. <a href="https://doi.org/10.1016/s0378-4290(02)00106-5">https://doi.org/10.1016/s0378-4290(02)00106-5</a>
+</div>
+<div id="ref-griffiths1985" class="csl-entry" role="listitem">
+GRIFFITHS, F.E.W., LYNDON, R.F., BENNETT, M.D., 1985. The Effects of Vernalization on the Growth of the Wheat Shoot Apex. Annals of Botany 56, 501–511. <a href="https://doi.org/10.1093/oxfordjournals.aob.a087035">https://doi.org/10.1093/oxfordjournals.aob.a087035</a>
+</div>
+<div id="ref-johnen2012" class="csl-entry" role="listitem">
+Johnen, T., Boettcher, U., Kage, H., 2012. A variable thermal time of the double ridge to flag leaf emergence phase improves the predictive quality of a CERES-Wheat type phenology model. Computers and Electronics in Agriculture 89, 62–69. <a href="https://doi.org/10.1016/j.compag.2012.08.002">https://doi.org/10.1016/j.compag.2012.08.002</a>
+</div>
+<div id="ref-kage1999" class="csl-entry" role="listitem">
+Kage, H., Stützel, H., 1999. HUME: An object oriented component library for generic modular modelling of dynamic systems. Symp. Eur. Soc. Agron. Spain.
+</div>
+<div id="ref-kirby1985" class="csl-entry" role="listitem">
+KIRBY, E.J.M., APPLEYARD, M., FELLOWES, G., 1985. Leaf emergence and tillering in barley and wheat. Agronomie 5, 193–200. <a href="https://doi.org/10.1051/agro:19850301">https://doi.org/10.1051/agro:19850301</a>
+</div>
+<div id="ref-lancashire1991a" class="csl-entry" role="listitem">
+LANCASHIRE, P.D., BLEIHOLDER, H., BOOM, T.V.D., LANGELÜDDEKE, P., STAUSS, R., WEBER, E., WITZENBERGER, A., 1991. A uniform decimal code for growth stages of crops and weeds. Annals of Applied Biology 119, 561–601. <a href="https://doi.org/10.1111/j.1744-7348.1991.tb04895.x">https://doi.org/10.1111/j.1744-7348.1991.tb04895.x</a>
+</div>
+<div id="ref-ritchie2015" class="csl-entry" role="listitem">
+RITCHIE, J.T., 2015. Wheat phasic development. American Society of Agronomy, Crop Science Society of America, Soil Science Society of America, pp. 31–54. <a href="https://doi.org/10.2134/agronmonogr31.c3">https://doi.org/10.2134/agronmonogr31.c3</a>
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
