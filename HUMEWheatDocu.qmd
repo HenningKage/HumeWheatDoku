@@ -54,35 +54,24 @@ options("citation_format" = "pandoc")
 
 ```
 
-The process-oriented dynamic model runs on daily time steps. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
+This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [@ratjen2016][@ratjen2015][@ratjen2016][@ratjen2015b], Ulf Böttcher, Adam Luig, Dorothee Neukam [@neukam2016] and others. It is in many aspects based on the CERES-Wheat model (CW) [@ritchie2015]. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
 
-# Plant
 
-## Development
+# Development
 
 The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage ([@lancashire1991a]). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
 
-+---------+---------+----------------------------------------------------------------------------------+
-| GS      | BBCH    | Phase                                                                            |
-+=========+=========+==================================================================================+
-| 7       | 00      | Fallow                                                                           |
-+---------+---------+----------------------------------------------------------------------------------+
-| 8       | 00      | Sowing to germination                                                            |
-+---------+---------+----------------------------------------------------------------------------------+
-| 9       | 05      | Germination to emergence                                                         |
-+---------+---------+----------------------------------------------------------------------------------+
-| 1       | 10      | Emergence to terminal Spikelet initiation                                        |
-+---------+---------+----------------------------------------------------------------------------------+
-| 2       | 30      | Terminal spikelet to end of leaf growth and beginning of ear growth              |
-+---------+---------+----------------------------------------------------------------------------------+
-| 3       | 40      | End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth |
-+---------+---------+----------------------------------------------------------------------------------+
-| 4       | 57      | End of pre-anthesis ear growth to beginning of grain filling                     |
-+---------+---------+----------------------------------------------------------------------------------+
-| 5       | 71      | Grain filling                                                                    |
-+---------+---------+----------------------------------------------------------------------------------+
-| 6       | 90      | End of grain filling to harvest                                                  |
-+---------+---------+----------------------------------------------------------------------------------+
+| GS  | BBCH | Phase                                                                            |
+|------------------|------------------|-------------------------------------|
+| 7   | 00   | Fallow                                                                           |
+| 8   | 00   | Sowing to germination                                                            |
+| 9   | 05   | Germination to emergence                                                         |
+| 1   | 10   | Emergence to terminal Spikelet initiation                                        |
+| 2   | 30   | Terminal spikelet to end of leaf growth and beginning of ear growth              |
+| 3   | 40   | End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth |
+| 4   | 57   | End of pre-anthesis ear growth to beginning of grain filling                     |
+| 5   | 71   | Grain filling                                                                    |
+| 6   | 90   | End of grain filling to harvest                                                  |
 
 : Development stages of the CW model (GS) and corresponding BBCH stages {#tbl-CWDevStages}
 
@@ -107,11 +96,11 @@ The main state variables of the phenological model are the GS-stage according to
 
 We simplified the model by pooling together the GS stages eight and nine, which represent the germination and emergence processes, because no data were available to distinguish between both events. The redefined parameter P9, which now governs the rate of development during the time from sowing to emergence, was calculated from observed thermal times from sowing to emergence .
 
-$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{P9}$$
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{P9}$$ {#eq-dGS_dt_GS9}
 
 The rate of change for BBCH is ten time higher as for GS as the event of crop emergence is equivalent to 10.
 
-$$\frac{dBBCH}{dt}=10\frac{\max (0,T-{{T}_{b}})}{P9}$$
+$$\frac{dBBCH}{dt}=10\frac{\max (0,T-{{T}_{b}})}{P9}$$ {#eq-dBBCH_dt_GS9}
 
 ### Emergence to terminal Spikelet initiation (GS 1)
 
@@ -121,13 +110,124 @@ $$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})\cdot \min (f(V),f(P))}{(400\cdot Phy
 
 The functions f(V) and f(P) as well as the Phyllocron (Phyll) are genotype specific.
 
+#### Vernalisation
+
 The effect of vernalisation on the development rate is calculated from the accumulated sum of "vernalisation days". The rate of change of the vernalisation days is calculated from the daily mean temperature and a vernalisation response function which is characterized by 4 cardinal temperatures (@fig-RelVernalisation).
 
-![RelVernalisation](RelVernalisation.png){#fig-RelVernalisation}
+![Relative vernalisation rate of winter wheat](RelVernalisation.png){#fig-RelVernalisation}
+
+The vernalisation rate is acccumulated in the state variable VernalisationDays.
+
+$$\frac{dV}{dt}=\max (0, fV)$$ {#eq-dV_dt}
+
+The value of the f(V) in @eq-dGS_dt_GS1 is calculated from the actual value of accumulated number of vernalisation dates according to:
+
+$$f(V) = 1-k\cdot \left(50-V \right)$$ {#eq-fV_k}
+
+The values of k thereby is genotype specific and according to Ritchie et al. (1998) is coded in the parameter value P1V. The value of 50 in @eq-fV_k is the maximum number of vernalisation days. The vernalisation days are reset to zero after the maximum number of vernalisation days is reached.\
+The value k is the slope of the linear relation between the vernalisation days and the development rate. It can be calculated from the parameter P1V according to
+
+$$k = \frac {P1V+0.55}{183}$$ {#eq-kfromP1V} For a larger number of wheat cultivars in Germany [@johnen2012b] found a value of P1V of 2.84. Higher values of P1V indicate a higher vernalisation requirement of the cultivar, i.e. a lower development rate at low vernalisation days which is typical for cultivars of continental origin. A low value of P1V indicates a low vernalisation requirement, typical for summer crops of wheat or for wheat cultivars grown in Mediterranean regions.
+
+```{r}
+#| label: fig-VernRate
+#| ref-label: VernRateplot
+#| fig-cap: Relative vernalisation rate of winter wheat as a function of accumulated vernalisation days
+#| fig-align: center
+#| echo: false
+
+
+fV <- function(V, k){
+  fV <- 1 - k * (50 - V)
+  fV <- pmax(fV, 0)
+  return(fV)
+}
+
+P1V <- c(0.5, 2.84, 5)
+k <- (P1V+0.55) / 183 
+
+VernDays <- seq(0, 50, 1)
+
+df_VernRate <- expand.grid( k = k, V = VernDays)
+df_VernRate$fV <- fV(df_VernRate$V, k)
+df_VernRate <- df_VernRate %>% mutate(P1V = round(k * 183-0.55,3))
+
+df_VernRate <- df_VernRate %>% mutate(P1V = as.factor(P1V))
+df_VernRate <- df_VernRate %>% filter(fV >= 0)
+df_VernRate <- df_VernRate %>% arrange(V, P1V)
+
+ggplot(data = df_VernRate, aes(x = V, y = fV, color=P1V), size=2) +
+  geom_line(size=2) +
+  labs(x = "Vernalisation days", y = "fV [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_aaas()  
+
+
+
+```
+
+#### Photoperiod
+
+The effect of photoperiod on the development rate (f(P)) is calculated from the actual photoperiod and a photoperiod response function
+
+$$f(P)=1-C \cdot\left(20-P\right)^2$$ {#eq-fPhoto}
+
+The parameter C is coded in the parameter P1D. The value of 20 in @eq-fPhoto is the maximum photoperiod. The value of C is the slope of the quadratic relation between the photoperiod and the development rate. It can be calculated from the parameter P1D according to
+
+$$C=P1D/500$$ {#eq-CfromP1D}
+
+Typical values of P1D are in the range of 1 to 3. Higher values of P1D indicate a higher photoperiod requirement of the cultivar, i.e. a lower development rate at low photoperiods which is typical for cultivars of northern origin. A low value of P1D indicates a low photoperiod requirement, typical for summer crops of wheat or for wheat cultivars grown in mediterranean regions. In the study of [@johnen2012a] a value of P1D of 2.76 was found as a mean for a larger number of wheat cultivars in Germany.
+
+```{r}
+#| label: fig-PhotRate
+#| ref-label: PhotRateplot
+#| fig-cap: Relative development rate of winter wheat at GS1 as a function of photoperiod
+#| fig-align: center
+#| echo: false
+
+fP <- function(P, C){
+  fP <- 1 - C * (20 - P)^2
+  fP <- pmax(fP, 0)
+  return(fP)
+}
+
+P1D <- c(1, 2, 3)
+C <- P1D / 500
+
+Photoperiod <- seq(8, 20, 0.2)
+
+df_PhotRate <- expand.grid( C = C, P = Photoperiod)
+df_PhotRate$fP <- fP(df_PhotRate$P, df_PhotRate$C)
+df_PhotRate <- df_PhotRate %>% mutate(P1D = round(C * 500,3))
+
+df_PhotRate <- df_PhotRate %>% mutate(P1D = as.factor(P1D))
+df_PhotRate <- df_PhotRate %>% filter(fP >= 0)
+df_PhotRate <- df_PhotRate %>% arrange(P, P1D)
+
+ggplot(data = df_PhotRate, aes(x = P, y = fP, color=P1D), size=2) +
+  geom_line(size=2) +
+  labs(x = "Photoperiod [h]", y = "fP [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_aaas()  
+
+
+```
+
+#### Leaf number and leaf initiation
 
 At early development stages (BBCH\<30) BBCH stages are determined by the number of leaves and tillers present. Their rate of change is determined by the Phyllochron (Phyll), i.e. the inverse of the phyllochron is the emergence rate of leaves and tillers per effective day temperature (\@eq-dBBCH_dt_GS1).
 
-At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appearance of the fourth leaf the first tiller is emerging and mainstem leaf appearance is then associated with tiller appearance until BBCH 30. $$\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll}$$ {#eq-dBBCH_dt_GS1}
+$$\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll}$$ {#eq-dBBCH_dt_GS1}
+
+At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appearance of the fourth leaf the first tiller is emerging and mainstem leaf appearance is then associated with tiller appearance until BBCH 30.
+
+The plastochron is the inverse of the rate of leaf initiation. It is assumed to be constant during the time from sowing to the end of leaf initation. It defines the rate of leaf initiation and together with the initial number of leaf primordia of the embryo at sowing the number of initiated leaves and with the GS stage when leaf initation ceases the number of leaves on the main stem.
+
+
+
+
+
+$$If \ \ BBCH >= 13.5 \ and \ BBCH<20; \    BBCH = BBCH+7.5$$ {#eq-BBCH_jumpto21}
 
 ### Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)
 
@@ -135,11 +235,9 @@ Within the model the implicit and simplifying assumption is made that GS 2 stage
 
 The GS change rate between GS 2 and 3 is calculated as the ratio of the daily temperature minus the base temperature (T~b~, assumed to be 0°C) to the thermal time interval GS 2 to GS 3. This thermal time interval is calculated by the number of leaves not yet expressed at GS 2 minus two (fL), multiplied by the phyllochron plus the temperature sum between BBCH 37 and 39, i.e. ‘PH39’:.
 
-## 
-
 $$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39}$$ {#eq-dGS_dt_GS2}
 
-= inL_MS-2- nL_MS, fL fixed at GS=2
+thereby the term fL denotes the leaves which have to appear after GS 2 is reached, calculated from the number of initiated leaves at GS 2 minus 2. The substraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia [@griffiths1985].
 
 In the CWm model we therefore calculated a rate of node emission and introduced a parameter we called ‘TSumInternode’ analogous to the phyllochron. The numerical value of this parameter is the inverse of the slope of the relation of node numbers to the temperature sum from BBCH 30. The rate of change of BBCH stages is calculated until BBCH 37 (final leaf begins to emerge) from the ratio of the effective day temperature and TSumInternode (\@eq-dBBCH_dt_GS1).
 
@@ -155,36 +253,323 @@ $$
   \frac{dBBCH}{dt}= \min \left( \frac{2\max (0,T-{{T}_{b}})}{\text{Ph39}},(40-BBCH) \right)
 $$ {#eq-dBBCH_dt_GS2b}
 
-## Growth
+### End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth (GS3)
+
+The period from the end of leaf growth to the beginning of ear growth is for the GS development rate defined by a length of 2 phytochrons
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{2Phyll}$$ {#eq-dGS_dt_GS3}
+
+The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation @eq-dBBCH_dt_GS3.
+
+$$\frac{dBBCH}{dt}=(4+1.7(GS-3))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS3}
+
+### End of pre-anthesis ear growth to beginning of grain filling (GS4)
+
+The period from the end of pre-anthesis ear growth to the beginning of grain filling is for the GS development rate defined by a length of 200 degree days:
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{200}$$ {#eq-dGS_dt_GS4}
+
+The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation @eq-dBBCH_dt_GS4.
+
+$$\frac{dBBCH}{dt}=(5.7+1.4(GS-4))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS4}
+
+### Grain filling (GS5)
+
+The period of grain filling is for the GS development rate defined by a genotype specific temperature sum and the effective temperature during grain filling. The latter is calculated as the mean temperature minus the base temperature. The effective temperature is divided by the temperature sum for grain filling (TSumGF) to get the rate of change of GS 5. :
+
+$$\frac{dGS}{dt}=\frac{\max (0,(T-{{T}_{b}})-1)}{TSumGF}$$ {#eq-dGS_dt_GS5}
+
+$$TSumGF = \frac{(P5+21.5)}{0.05}$$ {#eq-TSumGF}
+
+The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation @eq-dBBCH_dt_GS5.
+
+$$\frac{dBBCH}{dt}=(7.1+1.9(GS-5))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS5}
+
+### End of grain filling to harvest (GS6)
+
+The period from the end of grain filling to harvest is for the GS development rate defined by a length of 250 degree days:
+
+$$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{250}$$ {#eq-dGS_dt_GS6}
+
+The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation @eq-dBBCH_dt_GS6.
+
+$$\frac{dBBCH}{dt}=(9+(GS-6))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS6}
+
+# Dry matter production
+
+The daily dry matter accumulation ( $\frac{d{W_{tot}}}{dt}$) is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
 
 ```{mermaid}
-%%| fig-cap: diagram caption
+%%| fig-cap: Calculation of daily dry matter production in HUMEWheat. 
 %%| fig-align: center
+%%| label: fig-Modelscheme
+%%| ref-label: Modelscheme
 
 flowchart LR
-  A(RUEpot) -.-> F
-  C(ftemperatureLUE) -.-> A
-  D(fdroughtLUE) -.-> A
+  A(LUE) -.-> F
+  C(f<sub>T</sup>) -.-> A
+  D(SWDF) -.-> A
   E(Q) --> F{dW/dt}
-  F --> B[DM]
+  G(I) --> E
+  H(f<sub>int</sub>) -.-> E
+  I(LAI) -.-> H
+  J((LUE<sub>pot</sub>)) -.-> A
+  K(f<sub>SLN</sub>) -.-> A
+  L(SLN) -.-> K
   
+
 ```
 
-### Dry Matter Partitioning
+## Radiation interception
 
-### Canopy
+According to the Lambert-Beer law the fraction of the intercepted PAR is a function of leaf area index (LAI) and extinction coefficient (k~PAR~). Canopy reflection within the PAR range is thereby lumped into the empirical k~PAR~ value. The state variable LAI is calculated in the leaf area module. The fraction of intercepted PAR (f~int~) is calculated as follows:
 
-#### Leaf Area Development
+$$Q= PAR\text{(t)} \cdot \left ( 1-{e^{-{k_{PAR}} \cdot LAI\text{(t)}}} \right)$$ {#eq-PARincterception} This is a very simplified approach, not considering fractions of direct and diffuse radiation and their complex interactions with the canopy. To account for the effect of LAI on the extinction coefficient, the extinction coefficient is calculated as a function of LAI and the maximum extinction coefficient (k~PAR~ini) according to the following equation:
 
-#### Senescence
+$$k_{PAR} = min \left( k_{PAR_{max}},\ max(k_{ini}+ln(LAI) \cdot k_{dec}, \ k_{PAR}) \right)$$ {#eq-KPAR_fLAI}
 
-### Ressource Limitations
+where k~ini~ is the initial extinction coefficient and k~dec~ is the extinction coefficient decrease per unit of LAI. The standard extinction coefficient (k~PAR~max) is set to 0.7 in the model.
 
-#### Nitrogen
+```{r}
+#| label: fig-kPAR
+#| ref-label: kPARplot
+#| fig-cap: Extinction coefficient kPAR as a function of LAI
+#| fig-align: center
+#| echo: false
 
-#### Water
+kini <- 0.75
+kdec <- -0.06
+kPARmax <- 0.7
 
-## Evapotranspiration
+kPAR <- function(LAI, kPARmax, kini, kdec){
+  kPAR <- pmin(0.9,pmax(kini + log(LAI) * kdec, kPARmax))
+  return(kPAR)
+}
+
+df_kPAR <- data.frame(LAI = seq(0, 5, 0.01))
+
+df_kPAR$kPAR <- kPAR(df_kPAR$LAI, kPARmax, kini, kdec)
+
+ggplot(data = df_kPAR, aes(x = LAI, y = kPAR)) +
+  geom_line( size=2) +
+  labs(x = "LAI [-]", y = "kPAR [-]" ) +
+  theme_bw(base_size = 20) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_color_aaas()  
+
+
+
+```
+
+## Limiting factors on LUE
+
+Suboptimal temperature and drought stress reduces dry matter production rates below the potential. The influence of suboptimal conditions is quantified by a temperature (f~T~) and a soil water deficit factor (SWDF).
+
+### Temperature
+
+Daily mean temperature is calculated in a classical way from observed maximum and minimum temperature. if difference between min and max temperature is high, the maximum temperature is weighted stronger.
+
+$$if \left((T_{max} - T_{min}) > \Delta T_{crit}\right)  then  \\
+\quad T_{mean} = T_{max} \cdot T_{max_{wF}} + T_{min} \cdot (1 - T_{max_{wF}})$$ {#eq-TmaxwF}
+
+The weighting factor $T_{max_{wF}}$ is taken as 0.567. The critical temperature difference $\Delta T_{crit}$ is set to 8°C.
+
+The effect of temperature on LUE is calculated using a temperature effect factor fT \[0..1\] from the daily mean temperature. The base for its calculation is the equation of [@wang2002] (@eq-fT_WangEngel, @fig-fT_WangEngel).
+
+$$fT =  \frac{ \left( 2 \cdot (T - T_{min})^{\alpha} \cdot (T_{opt} - T_{min})^{\alpha} - (T - T_{min})^{(2 \cdot \alpha)} \right)} { (T_{opt} - T_{min})^{(2 \cdot \alpha)}}$$ {#eq-fT_WangEngel}
+
+with $$\alpha = \frac{  ln(2)}{ln((T_{max}-T_{min})/(T_{opt}-T_{min}))}$$ {#eq-fT_WangEngel_alpha} For @fig-fT_WangEngel the parameters Tmin = 0°C, Topt = 20°C and Tmax = 35°C were used.
+
+```{r}
+#| label: fig-fT_WangEngel
+#| ref-label: fTplot
+#| fig-cap: Temperature limitation factor fT as a function of mean daily temperature
+#| fig-align: center
+#| echo: false
+
+fT_WangEngel <- function(T, Tmin, Topt, Tmax){
+  alpha <- log(2)/log((Tmax-Tmin)/(Topt-Tmin))
+  fT <- (2 * (T - Tmin)^alpha * (Topt - Tmin)^alpha - (T - Tmin)^(2 * alpha)) / (Topt - Tmin)^(2 * alpha)
+  return(fT)
+}
+
+Tmin <- 0
+ToptWE <- 20
+Tmax <- 35
+
+df_fT <- data.frame(T = seq(-5, 35, 0.1))
+df_fT$fT <- fT_WangEngel(df_fT$T, Tmin, ToptWE, Tmax)
+
+ggplot(data = df_fT, aes(x = T, y = fT, , color=T)) +
+  geom_line( size=2) +
+  labs(x = "Mean daily temperature [°C]", y = "fT [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_gradient(low = "blue", high = "red")
+ # scale_color_aaas()  
+
+
+```
+
+If available an canopy surface temperature can be used to calculate the temperature effect factor. The minimum of the obtained fT value is used for the calculation of the daily dry matter accumulation rate.
+
+### Drought stress
+
+For stomatal aperture, the diffusion paths and therefore the resistances/conductivities for CO~2~ and water evaporation are not identical, because of the liquid-phase components of the CO~2~ pathway into the mesophyll. Consequently, a non-linear relation between transpiration and LUE reduction is assumed, according to [@ferreyra2003]. The formulation based on the RT factor technically calculated in the soil water module: RT is defined as the ratio between the sum of Tact and interception evaporation (I~p~) divided by the sum of T~pot~ and I~p~. The factor is calculated as the ratio
+
+$$RT= \frac{ (T_{act}+I_p)}{(T_{pot}+I_p)}$$ {#eq-RelTranspiration}
+
+Within the source code of *HUMEWheat* the factor RT is called *TransIntRatio*. The soil water deficit factor (SWDF) is calculated from the RT as follows:
+
+$$SWDF = 1-( 1-RT )^{pSWDF}$$ {#eq-SWDF}
+
+The value of pSWDF thereby defines the non-linearity of the relation between RT and SWDF. The value of pSWDF is set to 2.5 in the model. @fig-SWDF shows the relation between RT and SWDF for different values of pSWDF.
+
+```{r}
+#| label: fig-SWDF
+#| ref-label: SWDFplot
+#| fig-cap: Relation between RT and SWDF for different values of pSWDF
+#| fig-align: center
+#| echo: false
+
+
+SWDF <- function(RT, pSWDF){
+  SWDF <- 1 - (1 - RT)^pSWDF
+  return(SWDF)
+}
+
+RT <- seq(0.0, 1, 0.05)
+
+pSWDF <- c(1, 1.5, 2, 2.5, 3)
+
+df_SWDF <- expand.grid(RT = RT, pSWDF = pSWDF)
+
+
+df_SWDF$SWDF <- SWDF(df_SWDF$RT, df_SWDF$pSWDF)
+df_SWDF <- df_SWDF %>% mutate(pSWDF = as.factor(pSWDF))
+
+ggplot(data = df_SWDF, aes(x = RT, y = SWDF, color=pSWDF) ) +
+  geom_line(size=2) +
+  labs(x = "RT", y = "SWDF") +
+  theme_bw(base_size = 20) +
+  scale_color_aaas()  
+
+```
+
+### Nitrogen limitations
+
+Consistent with [@sinclair1989] , [@meinke1997] and [@meinke1998] HumeWheat uses an SLN threshold value SLN~crit~ \[g N^.^cm^-2^\] below which a linear LUE reduction factor (f~SLN~) is applied.
+
+In a first step the optimum SLN value (SLN~opt~) is calculated from the initial SLN value (SLN~max~) and the green area index (GAI) according to the following equation:
+
+$$SLN_{crit} =SLN_{crit_{int}}+SLN_{crit_{inc}} \cdot GAI;$$ {#eq-SLNcrit}
+
+The values of the parameters SLN~crit~int and SLN~crit~inc are set to 3.74 and -0.228, respectively. The value of SLN~crit~int is the initial SLN value at GAI = 0. The value of SLN~crit~inc is the increase of the SLN~crit~ value per unit of GAI.
+
+Before booting SLN~crit~ is always lower than SLN~opt~.
+
+$$SLNI = min \left( 1, \frac {SLN} {SLN_{crit}} \right)$$ {#eq-SLNI}
+
+The factor SLNI is used to calculate the nitrogen limitation factor f~SLN~ according to the following equation:
+
+$$Carbo_{Red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right)$$ {#eq-CarboRed}
+
+```{r}
+#| label: fig-CarboRed
+#| ref-label: CarboRedplot
+#| fig-cap: Carbohydrate reduction factor CarboRed as a function of SLNI
+#| fig-align: center
+#| echo: false
+
+CarboRed <- function(SLNI, SLNI_a, SLNI_b, SLNI_c){
+  CarboRed <- pmin(1,pmax(0, SLNI_a + SLNI_b * SLNI + SLNI_c * SLNI^2))
+  return(CarboRed)
+}
+
+SLNI_a <- -0.197
+SLNI_b <- 2.8
+SLNI_c <- -1.6
+
+SLNI <- seq(0, 1, 0.01)
+
+df_CarboRed <- data.frame(SLNI = SLNI)
+
+df_CarboRed$CarboRed <- CarboRed(df_CarboRed$SLNI, SLNI_a, SLNI_b, SLNI_c)
+
+ggplot(data = df_CarboRed, aes(x = SLNI, y = CarboRed, color=SLNI)) +
+  geom_line(size=2) +
+  labs(x = "SLNI [0..1]", y = "CarboRed [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_gradient(low = "yellow", high = "darkgreen")
+  #scale_color_aaas()
+
+
+```
+
+Since a soil N limitation is not implemented yet, f~SLN~ \< SLN~crit1~ occurs only during N remobilization from the vegetative organs to grains, i.e. is a factor that accounts for senescense. The daily dry matter accumulation is calculated as follows:
+
+$$\frac{d{W_{tot}}}{dt} = f_{T} \cdot f_{int} \cdot f_{SLN} \cdot f_{SW} \cdot f_{N} \cdot LUE_{pot} \cdot I$$
+
+$$ \frac{d{{W}_{tot}}}{dt}= LUE_{pot} \cdot PAR\text{(t)} \cdot (1-{e^{-{k_{PAR}} \cdot LAI\text{(t)}}}) \cdot {f_{T}}\text{(t)}\cdot \min ({f_{RT}}\text{(t)},{f_{SLN}}\text{(t)}) 
+$$ \# Dry Matter Partitioning
+
+### CO~2~ concentration
+
+The effect of a varying CO~2~ concentration on LUE is optionally calculated using a CO~2~ effect factor f~CO~2\~ \[0..1\]. Thereby an interaction with the crop water stress status is assumed. The CO~2~ effect factor is calculated as follows:
+
+$$f_{CO2} = max\left( f_{CO_2min}, \ f_{CO_2min} \cdot  \left(\left[CO_2\right]-\tau \right)^{fCO_2}  \right)$$ {#eq-fCO2}
+
+with
+
+$$ f_{CO_2min} = (f_{CO_2}scale+CWSI \cdot f_{CWSI})$$ {#eq-fCO2min}
+
+The crop water stress index is calculated from 1-TransIntRatio (0 = no drought stress, 1 = maximum drought stress). The interaction of CWSI and CO~2~ concentration is described by the parameter f~CWSI~. The parameter f~CO~2\~scale is the CO~2~ effect factor at the CO~2~ concentration of the compensation point ($\tau$). The parameter f~CO~2\~ is the slope of the CO~2~ effect factor curve. The parameter $\tau$ is the CO~2~ concentration at which the CO~2~ effect factor is equal to f~CO~2\~scale. The CO~2~ effect factor is limited to a value between 0 and 1. It follows from @fig-fCO2eff that the CO~2~ effect factor increases with increasing CO~2~ concentration and increasing CWSI, which means that the effect of CO~2~ on LUE is stronger under drought stress conditions.
+
+```{r}
+#| label: fig-fCO2eff
+#| ref-label: fCO2effplot
+#| fig-cap: CO2 effect factor fCO2 as a function of CO2 concentration and SWDF
+#| fig-align: center
+#| echo: false
+
+
+fCO2_f <- function(CO2pp, CiCompensation, fCO2_scale, fCO2, fCWSI, CWSI){
+  CO2_factor_min <- (fCO2_scale + CWSI * fCWSI)
+  CO2_factor <- ifelse(CO2pp > CiCompensation,
+                       max(CO2_factor_min, CO2_factor_min * (CO2pp - CiCompensation)^fCO2),
+                       CO2_factor_min)                       
+  return(CO2_factor)
+}
+
+CO2pp <- seq(350, 600, 10)
+CiCompensation <- 350
+fCO2_scale <- 0.723
+fCO2 <- 0.086
+CWSI <- seq(0, 0.8, 0.2)
+fCWSI <- 0.077	
+
+df_fCO2 <- expand.grid(CO2pp = CO2pp, CWSI = CWSI)
+
+df_fCO2$fCO2 <- Vectorize (fCO2_f)(df_fCO2$CO2pp, CiCompensation, fCO2_scale, fCO2, fCWSI, df_fCO2$CWSI)
+df_fCO2 <- df_fCO2 %>% mutate(CWSI = as.factor(CWSI))
+
+ggplot(data = df_fCO2, aes(x = CO2pp, y = fCO2, color=CWSI)) +
+  geom_line(size=2) +
+  labs(x = "CO2 concentration [ppm]", y = "fCO2 [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_brewer()  +
+  scale_x_continuous(limits = c(350, 600))
+
+
+
+```
+
+
+# Leaf Area Development
+
+## Senescence
+
+
+# Evapotranspiration
 
 # Soil water
 
@@ -203,58 +588,4 @@ T_{air} - T_{base} & \text{if}~T>0\\
 
 # Parameters
 
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| Parameter     | Unit                  | Description                                                  | Value dissertation Bangemann | Fitted value 2022/2023         |
-+===============+=======================+==============================================================+==============================+================================+
-| ftia          | \[-\]                 | timing of tuber initiation                                   | 0.0014                       | ?                              |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| ftib          | \[-\]                 | timing of tuber initiation                                   | 0.00039                      | ?                              |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| mart          | \[-\]                 | Dutch maturity groups (range: 2.5 - 9.5)                     | \-                           | \-                             |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| fta           | \[-\]                 | Gompertz function (value of upper asymptote)                 | 1.07                         | 1.0292                         |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| ftb           | \[-\]                 | Gompertz function                                            | 124.69                       | 128.6411                       |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| TSUM~tub0~    | \[-\]                 | Gompertz function                                            | 143.659                      | 107.5675                       |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| vf1           | \[%\]                 | N concentration at 1 g DM m^-^² (N-dilution curve)           | 82.34                        | 29.0418 (only 2022)            |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| vf2           | \[-\]                 | coefficient of dilution (N-dilution curve)                   | -0.5641                      | -0.40285 (only 2022)           |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| DMshoot~crit~ | \[g DM~total~ m^-2^\] | DM~total~ until which N concentration remains at maximum     | 121.213                      | \- (not enough data available) |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| NmaxShoot     | \[%\]                 | maximum of N-concentration                                   | 5                            | \- (not enough data available) |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| dlh           | \[-\]                 | allometric equation of DM~stem~ and DM~leaf~                 | -1.87                        | 2022: -2.30397                 |
-|               |                       |                                                              |                              |                                |
-|               |                       |                                                              |                              | 2023: -2.9235                  |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| dlb           | \[-\]                 | allometric equation of DM~stem~ and DM~leaf~                 | 1.18                         | 2022: 1.277                    |
-|               |                       |                                                              |                              |                                |
-|               |                       |                                                              |                              | 2023: 1.612                    |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| SLA~fix~      | \[m^2^ g^-1^\]        | specific leaf area if no drought stress occurs               | 0.028                        | 2022: ca. 0.022                |
-|               |                       |                                                              |                              |                                |
-|               |                       |                                                              |                              | 2023: ca. 0.045                |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| LAIe~a~       | \[-\]                 | early leaf area development                                  | 0.0006                       | \- (not enough data available) |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| LAIe~b~       | \[-\]                 | early leaf area development                                  | 1.2                          | \- (not enough data available) |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| LAIcrit       | \[m^2^ m^-2^\]        | critical value until which LAI is determined by thermal time | 0.75 (literature)            | (better fit with lower value)  |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| kz~b~         | \[cm d^-1^ °C\]       | linear increase of root depth                                | 0.1                          | 0.05                           |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| zr~max~       | \[cm\]                | maximum rooting depth                                        | 60                           | 80                             |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| T~baseroot~   | \[°C\]                | base temperature of root growth                              | 0                            | 8                              |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| Rdv~a~        | \[-\]                 | senescence due to developmental ageing                       | -11.7                        |                                |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| Rdv~b~        | \[-\]                 | senescence due to developmental ageing                       | 0.48                         |                                |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| Rdv~d~        | \[-\]                 | senescence due to developmental ageing                       | 0.0005                       |                                |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
-| Rdv~e~        | \[-\]                 | senescence due to developmental ageing                       | 900                          |                                |
-+---------------+-----------------------+--------------------------------------------------------------+------------------------------+--------------------------------+
+# Literature
