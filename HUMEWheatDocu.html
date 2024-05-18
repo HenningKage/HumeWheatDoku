@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Agronomy and Crop Science Group, Kiel University">
-<meta name="dcterms.date" content="2024-05-11">
+<meta name="dcterms.date" content="2024-05-18">
 
 <title>Simulation of Wheat Growth and Development</title>
 <style>
@@ -114,23 +114,22 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#plant" id="toc-plant" class="nav-link active" data-scroll-target="#plant"><span class="header-section-number">1</span> Plant</a>
+  <li><a href="#development" id="toc-development" class="nav-link active" data-scroll-target="#development"><span class="header-section-number">1</span> Development</a>
   <ul>
-  <li><a href="#development" id="toc-development" class="nav-link" data-scroll-target="#development"><span class="header-section-number">1.1</span> Development</a></li>
-  <li><a href="#calculation-of-changes-of-gs-and-bbch" id="toc-calculation-of-changes-of-gs-and-bbch" class="nav-link" data-scroll-target="#calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.2</span> Calculation of changes of GS and BBCH</a>
+  <li><a href="#calculation-of-changes-of-gs-and-bbch" id="toc-calculation-of-changes-of-gs-and-bbch" class="nav-link" data-scroll-target="#calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.1</span> Calculation of changes of GS and BBCH</a>
   <ul class="collapse">
-  <li><a href="#sowing-to-emergence-gs-8-and-9" id="toc-sowing-to-emergence-gs-8-and-9" class="nav-link" data-scroll-target="#sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.2.1</span> Sowing to emergence (GS 8 and 9)</a></li>
-  <li><a href="#emergence-to-terminal-spikelet-initiation-gs-1" id="toc-emergence-to-terminal-spikelet-initiation-gs-1" class="nav-link" data-scroll-target="#emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.2.2</span> Emergence to terminal Spikelet initiation (GS 1)</a>
+  <li><a href="#sowing-to-emergence-gs-8-and-9" id="toc-sowing-to-emergence-gs-8-and-9" class="nav-link" data-scroll-target="#sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.1.1</span> Sowing to emergence (GS 8 and 9)</a></li>
+  <li><a href="#emergence-to-terminal-spikelet-initiation-gs-1" id="toc-emergence-to-terminal-spikelet-initiation-gs-1" class="nav-link" data-scroll-target="#emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.1.2</span> Emergence to terminal Spikelet initiation (GS 1)</a>
   <ul class="collapse">
-  <li><a href="#vernalisation" id="toc-vernalisation" class="nav-link" data-scroll-target="#vernalisation"><span class="header-section-number">1.2.2.1</span> Vernalisation</a></li>
-  <li><a href="#photoperiod" id="toc-photoperiod" class="nav-link" data-scroll-target="#photoperiod"><span class="header-section-number">1.2.2.2</span> Photoperiod</a></li>
-  <li><a href="#leaf-number-and-leaf-initiation" id="toc-leaf-number-and-leaf-initiation" class="nav-link" data-scroll-target="#leaf-number-and-leaf-initiation"><span class="header-section-number">1.2.2.3</span> Leaf number and leaf initiation</a></li>
+  <li><a href="#vernalisation" id="toc-vernalisation" class="nav-link" data-scroll-target="#vernalisation"><span class="header-section-number">1.1.2.1</span> Vernalisation</a></li>
+  <li><a href="#photoperiod" id="toc-photoperiod" class="nav-link" data-scroll-target="#photoperiod"><span class="header-section-number">1.1.2.2</span> Photoperiod</a></li>
+  <li><a href="#leaf-number-and-leaf-initiation" id="toc-leaf-number-and-leaf-initiation" class="nav-link" data-scroll-target="#leaf-number-and-leaf-initiation"><span class="header-section-number">1.1.2.3</span> Leaf number and leaf initiation</a></li>
   </ul></li>
-  <li><a href="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" id="toc-terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="nav-link" data-scroll-target="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.2.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</a></li>
-  <li><a href="#end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" id="toc-end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" class="nav-link" data-scroll-target="#end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3"><span class="header-section-number">1.2.4</span> End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth (GS3)</a></li>
-  <li><a href="#end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" id="toc-end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" class="nav-link" data-scroll-target="#end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4"><span class="header-section-number">1.2.5</span> End of pre-anthesis ear growth to beginning of grain filling (GS4)</a></li>
-  <li><a href="#grain-filling-gs5" id="toc-grain-filling-gs5" class="nav-link" data-scroll-target="#grain-filling-gs5"><span class="header-section-number">1.2.6</span> Grain filling (GS5)</a></li>
-  <li><a href="#end-of-grain-filling-to-harvest-gs6" id="toc-end-of-grain-filling-to-harvest-gs6" class="nav-link" data-scroll-target="#end-of-grain-filling-to-harvest-gs6"><span class="header-section-number">1.2.7</span> End of grain filling to harvest (GS6)</a></li>
+  <li><a href="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" id="toc-terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="nav-link" data-scroll-target="#terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.1.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</a></li>
+  <li><a href="#end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" id="toc-end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" class="nav-link" data-scroll-target="#end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3"><span class="header-section-number">1.1.4</span> End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth (GS3)</a></li>
+  <li><a href="#end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" id="toc-end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" class="nav-link" data-scroll-target="#end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4"><span class="header-section-number">1.1.5</span> End of pre-anthesis ear growth to beginning of grain filling (GS4)</a></li>
+  <li><a href="#grain-filling-gs5" id="toc-grain-filling-gs5" class="nav-link" data-scroll-target="#grain-filling-gs5"><span class="header-section-number">1.1.6</span> Grain filling (GS5)</a></li>
+  <li><a href="#end-of-grain-filling-to-harvest-gs6" id="toc-end-of-grain-filling-to-harvest-gs6" class="nav-link" data-scroll-target="#end-of-grain-filling-to-harvest-gs6"><span class="header-section-number">1.1.7</span> End of grain filling to harvest (GS6)</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#dry-matter-production" id="toc-dry-matter-production" class="nav-link" data-scroll-target="#dry-matter-production"><span class="header-section-number">2</span> Dry matter production</a>
@@ -140,27 +139,28 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#temperature" id="toc-temperature" class="nav-link" data-scroll-target="#temperature"><span class="header-section-number">2.2.1</span> Temperature</a></li>
   <li><a href="#drought-stress" id="toc-drought-stress" class="nav-link" data-scroll-target="#drought-stress"><span class="header-section-number">2.2.2</span> Drought stress</a></li>
+  <li><a href="#nitrogen-limitations" id="toc-nitrogen-limitations" class="nav-link" data-scroll-target="#nitrogen-limitations"><span class="header-section-number">2.2.3</span> Nitrogen limitations</a></li>
+  <li><a href="#co2-concentration" id="toc-co2-concentration" class="nav-link" data-scroll-target="#co2-concentration"><span class="header-section-number">2.2.4</span> CO<sub>2</sub> concentration</a></li>
   </ul></li>
-  <li><a href="#nitrogen-limitations" id="toc-nitrogen-limitations" class="nav-link" data-scroll-target="#nitrogen-limitations"><span class="header-section-number">2.3</span> Nitrogen limitations</a>
+  <li><a href="#daily-dry-matter-accumulation" id="toc-daily-dry-matter-accumulation" class="nav-link" data-scroll-target="#daily-dry-matter-accumulation"><span class="header-section-number">2.3</span> Daily dry matter accumulation</a></li>
+  </ul></li>
+  <li><a href="#dry-matter-partitioning" id="toc-dry-matter-partitioning" class="nav-link" data-scroll-target="#dry-matter-partitioning"><span class="header-section-number">3</span> Dry Matter Partitioning</a>
+  <ul>
+  <li><a href="#allometric-leaf-stem-partitioning" id="toc-allometric-leaf-stem-partitioning" class="nav-link" data-scroll-target="#allometric-leaf-stem-partitioning"><span class="header-section-number">3.1</span> Allometric Leaf Stem Partitioning</a>
   <ul class="collapse">
-  <li><a href="#co2-concentration" id="toc-co2-concentration" class="nav-link" data-scroll-target="#co2-concentration"><span class="header-section-number">2.3.1</span> CO<sub>2</sub> concentration</a></li>
-  <li><a href="#canopy" id="toc-canopy" class="nav-link" data-scroll-target="#canopy"><span class="header-section-number">2.3.2</span> Canopy</a>
-  <ul class="collapse">
-  <li><a href="#leaf-area-development" id="toc-leaf-area-development" class="nav-link" data-scroll-target="#leaf-area-development"><span class="header-section-number">2.3.2.1</span> Leaf Area Development</a></li>
-  <li><a href="#senescence" id="toc-senescence" class="nav-link" data-scroll-target="#senescence"><span class="header-section-number">2.3.2.2</span> Senescence</a></li>
-  </ul></li>
-  <li><a href="#ressource-limitations" id="toc-ressource-limitations" class="nav-link" data-scroll-target="#ressource-limitations"><span class="header-section-number">2.3.3</span> Ressource Limitations</a>
-  <ul class="collapse">
-  <li><a href="#nitrogen" id="toc-nitrogen" class="nav-link" data-scroll-target="#nitrogen"><span class="header-section-number">2.3.3.1</span> Nitrogen</a></li>
-  <li><a href="#water" id="toc-water" class="nav-link" data-scroll-target="#water"><span class="header-section-number">2.3.3.2</span> Water</a></li>
+  <li><a href="#drought-effects" id="toc-drought-effects" class="nav-link" data-scroll-target="#drought-effects"><span class="header-section-number">3.1.1</span> Drought effects</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#evapotranspiration" id="toc-evapotranspiration" class="nav-link" data-scroll-target="#evapotranspiration"><span class="header-section-number">2.4</span> Evapotranspiration</a></li>
+  <li><a href="#leaf-area-development" id="toc-leaf-area-development" class="nav-link" data-scroll-target="#leaf-area-development"><span class="header-section-number">4</span> Leaf Area Development</a>
+  <ul>
+  <li><a href="#senescence" id="toc-senescence" class="nav-link" data-scroll-target="#senescence"><span class="header-section-number">4.1</span> Senescence</a></li>
   </ul></li>
-  <li><a href="#soil-water" id="toc-soil-water" class="nav-link" data-scroll-target="#soil-water"><span class="header-section-number">3</span> Soil water</a></li>
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">4</span> Implementation</a></li>
-  <li><a href="#miscellaneous" id="toc-miscellaneous" class="nav-link" data-scroll-target="#miscellaneous"><span class="header-section-number">5</span> Miscellaneous</a></li>
-  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters"><span class="header-section-number">6</span> Parameters</a></li>
+  <li><a href="#evapotranspiration" id="toc-evapotranspiration" class="nav-link" data-scroll-target="#evapotranspiration"><span class="header-section-number">5</span> Evapotranspiration</a></li>
+  <li><a href="#soil-water" id="toc-soil-water" class="nav-link" data-scroll-target="#soil-water"><span class="header-section-number">6</span> Soil water</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">7</span> Implementation</a></li>
+  <li><a href="#miscellaneous" id="toc-miscellaneous" class="nav-link" data-scroll-target="#miscellaneous"><span class="header-section-number">8</span> Miscellaneous</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters"><span class="header-section-number">9</span> Parameters</a></li>
+  <li><a href="#literature" id="toc-literature" class="nav-link" data-scroll-target="#literature"><span class="header-section-number">10</span> Literature</a></li>
   </ul>
 </nav>
 </div>
@@ -187,7 +187,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 11, 2024</p>
+      <p class="date">May 18, 2024</p>
     </div>
   </div>
   
@@ -206,11 +206,9 @@ p {
 }
 </style>
 </div>
-<p>This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015">(<a href="#ref-ratjen2015" role="doc-biblioref">RATJEN and KAGE, 2015</a>)</span>[<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015b">(<a href="#ref-ratjen2015b" role="doc-biblioref">Ratjen and Kage, 2015</a>)</span>, Ulf Böttcher, Adam Luig, Dorothee Neukam <span class="citation" data-cites="neukam2016">(<a href="#ref-neukam2016" role="doc-biblioref">Neukam et al., 2016</a>)</span> and others. It is in many aspects based on the CERES-Wheat model (CW) <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span>. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature [°C], precipitation [mm&nbsp;d<sup>-1</sup>], global radiation [W&nbsp;m<sup>-2</sup>], wind speed [m&nbsp;s<sup>-1</sup>], relative humidity [%] and values derived from these like vapor pressure [mbar] and saturation deficit [mbar].</p>
-<section id="plant" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Plant</h1>
-<section id="development" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="development"><span class="header-section-number">1.1</span> Development</h2>
+<p>This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015">(<a href="#ref-ratjen2015" role="doc-biblioref">RATJEN and KAGE, 2015a</a>)</span>[<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015b">(<a href="#ref-ratjen2015b" role="doc-biblioref">Ratjen and Kage, 2015</a>)</span>, Ulf Böttcher, Adam Luig, Dorothee Neukam <span class="citation" data-cites="neukam2016">(<a href="#ref-neukam2016" role="doc-biblioref">Neukam et al., 2016</a>)</span> <span class="citation" data-cites="neukam2015">(<a href="#ref-neukam2015" role="doc-biblioref">Neukam et al., 2015</a>)</span> and others. It is in many aspects based on the CERES-Wheat model (CW) <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span>. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature [°C], precipitation [mm&nbsp;d<sup>-1</sup>], global radiation [W&nbsp;m<sup>-2</sup>], wind speed [m&nbsp;s<sup>-1</sup>], relative humidity [%] and values derived from these like vapor pressure [mbar] and saturation deficit [mbar].</p>
+<section id="development" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Development</h1>
 <p>The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in <span class="citation" data-cites="johnen2012">(<a href="#ref-johnen2012" role="doc-biblioref">Johnen et al., 2012a</a>)</span>. The phenological process in CW is divided into nine developmental or growth stages (GS) according to <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span> (<a href="#tbl-CWDevStages" class="quarto-xref">Table&nbsp;1</a>), the common approach in Europe, however is the BBCH stage (<span class="citation" data-cites="lancashire1991a">(<a href="#ref-lancashire1991a" role="doc-biblioref">LANCASHIRE et al., 1991</a>)</span>). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.</p>
 <div id="tbl-CWDevStages" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -220,9 +218,9 @@ Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH sta
 <div aria-describedby="tbl-CWDevStages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 50%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 47%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -290,24 +288,23 @@ Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH sta
 <p>Where Plast is the plastochron (°Cd) T is the air temperature and T<sub>b</sub> is the base temperature. The formation of leaf primordia which produce leaves is finished some time before the double ridge stage (Bonnet, 1935; Bonnet, 1936; Muschik, 1957). The time of the cessation of leaf primordia initiation, however, is not exactly coupled to a certain GS in the CW model and is also not linked to a certain BBCH stage. From available data of BBCH 37, i.e.&nbsp;the time when the last leaf appears, it was possible to estimate an approximate GS corresponding to the formation of the final leaf primordium (<span class="math inline">GS_{flp}</span>) ‘ex post’. The number of visible leaves on the main stem nLMS is calculated accordingly (<a href="#eq-dnLMS" class="quarto-xref">Eq.&nbsp;2</a>):</p>
 <p><span id="eq-dnLMS"><span class="math display">\frac{d\,n{{L}_{MS}}}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll} \tag{2}</span></span></p>
 <p>where Phyll denotes the phyllochron (°Cd).</p>
-</section>
-<section id="calculation-of-changes-of-gs-and-bbch" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.2</span> Calculation of changes of GS and BBCH</h2>
+<section id="calculation-of-changes-of-gs-and-bbch" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="calculation-of-changes-of-gs-and-bbch"><span class="header-section-number">1.1</span> Calculation of changes of GS and BBCH</h2>
 <p>The main state variables of the phenological model are the GS-stage according to Ritchie and the BBCH-stage more commonly used in the description of wheat phenology. Their rate of change is calculated stage specific.</p>
-<section id="sowing-to-emergence-gs-8-and-9" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.2.1</span> Sowing to emergence (GS 8 and 9)</h3>
+<section id="sowing-to-emergence-gs-8-and-9" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="sowing-to-emergence-gs-8-and-9"><span class="header-section-number">1.1.1</span> Sowing to emergence (GS 8 and 9)</h3>
 <p>We simplified the model by pooling together the GS stages eight and nine, which represent the germination and emergence processes, because no data were available to distinguish between both events. The redefined parameter P9, which now governs the rate of development during the time from sowing to emergence, was calculated from observed thermal times from sowing to emergence .</p>
 <p><span id="eq-dGS_dt_GS9"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{P9} \tag{3}</span></span></p>
 <p>The rate of change for BBCH is ten time higher as for GS as the event of crop emergence is equivalent to 10.</p>
 <p><span id="eq-dBBCH_dt_GS9"><span class="math display">\frac{dBBCH}{dt}=10\frac{\max (0,T-{{T}_{b}})}{P9} \tag{4}</span></span></p>
 </section>
-<section id="emergence-to-terminal-spikelet-initiation-gs-1" class="level3" data-number="1.2.2">
-<h3 data-number="1.2.2" class="anchored" data-anchor-id="emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.2.2</span> Emergence to terminal Spikelet initiation (GS 1)</h3>
+<section id="emergence-to-terminal-spikelet-initiation-gs-1" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="emergence-to-terminal-spikelet-initiation-gs-1"><span class="header-section-number">1.1.2</span> Emergence to terminal Spikelet initiation (GS 1)</h3>
 <p>Temperature, vernalization, photoperiod, and phyllochron interval determine the development rate during GS 1. According to CW the lowest value of two functions, depending on the vernalization stage and the actual photoperiod in interaction with the actual effective temperature limits the development rate (<a href="#eq-dGS_dt_GS1" class="quarto-xref">Eq.&nbsp;5</a>).</p>
 <p><span id="eq-dGS_dt_GS1"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})\cdot \min (f(V),f(P))}{(400\cdot Phyll\ /\ 95)} \tag{5}</span></span></p>
 <p>The functions f(V) and f(P) as well as the Phyllocron (Phyll) are genotype specific.</p>
-<section id="vernalisation" class="level4" data-number="1.2.2.1">
-<h4 data-number="1.2.2.1" class="anchored" data-anchor-id="vernalisation"><span class="header-section-number">1.2.2.1</span> Vernalisation</h4>
+<section id="vernalisation" class="level4" data-number="1.1.2.1">
+<h4 data-number="1.1.2.1" class="anchored" data-anchor-id="vernalisation"><span class="header-section-number">1.1.2.1</span> Vernalisation</h4>
 <p>The effect of vernalisation on the development rate is calculated from the accumulated sum of “vernalisation days”. The rate of change of the vernalisation days is calculated from the daily mean temperature and a vernalisation response function which is characterized by 4 cardinal temperatures (<a href="#fig-RelVernalisation" class="quarto-xref">Figure&nbsp;1</a>).</p>
 <div id="fig-RelVernalisation" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -341,8 +338,8 @@ Figure&nbsp;2: Relative vernalisation rate of winter wheat as a function of accu
 </div>
 </div>
 </section>
-<section id="photoperiod" class="level4" data-number="1.2.2.2">
-<h4 data-number="1.2.2.2" class="anchored" data-anchor-id="photoperiod"><span class="header-section-number">1.2.2.2</span> Photoperiod</h4>
+<section id="photoperiod" class="level4" data-number="1.1.2.2">
+<h4 data-number="1.1.2.2" class="anchored" data-anchor-id="photoperiod"><span class="header-section-number">1.1.2.2</span> Photoperiod</h4>
 <p>The effect of photoperiod on the development rate (f(P)) is calculated from the actual photoperiod and a photoperiod response function</p>
 <p><span id="eq-fPhoto"><span class="math display">f(P)=1-C \cdot\left(20-P\right)^2 \tag{9}</span></span></p>
 <p>The parameter C is coded in the parameter P1D. The value of 20 in <a href="#eq-fPhoto" class="quarto-xref">Eq.&nbsp;9</a> is the maximum photoperiod. The value of C is the slope of the quadratic relation between the photoperiod and the development rate. It can be calculated from the parameter P1D according to</p>
@@ -363,16 +360,17 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
 </div>
 </div>
 </section>
-<section id="leaf-number-and-leaf-initiation" class="level4" data-number="1.2.2.3">
-<h4 data-number="1.2.2.3" class="anchored" data-anchor-id="leaf-number-and-leaf-initiation"><span class="header-section-number">1.2.2.3</span> Leaf number and leaf initiation</h4>
+<section id="leaf-number-and-leaf-initiation" class="level4" data-number="1.1.2.3">
+<h4 data-number="1.1.2.3" class="anchored" data-anchor-id="leaf-number-and-leaf-initiation"><span class="header-section-number">1.1.2.3</span> Leaf number and leaf initiation</h4>
 <p>At early development stages (BBCH&lt;30) BBCH stages are determined by the number of leaves and tillers present. Their rate of change is determined by the Phyllochron (Phyll), i.e.&nbsp;the inverse of the phyllochron is the emergence rate of leaves and tillers per effective day temperature (@eq-dBBCH_dt_GS1).</p>
 <p><span id="eq-dBBCH_dt_GS1"><span class="math display">\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll} \tag{11}</span></span></p>
 <p>At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appearance of the fourth leaf the first tiller is emerging and mainstem leaf appearance is then associated with tiller appearance until BBCH 30.</p>
+<p>The plastochron is the inverse of the rate of leaf initiation. It is assumed to be constant during the time from sowing to the end of leaf initation. It defines the rate of leaf initiation and together with the initial number of leaf primordia of the embryo at sowing the number of initiated leaves and with the GS stage when leaf initation ceases the number of leaves on the main stem.</p>
 <p><span id="eq-BBCH_jumpto21"><span class="math display">If \ \ BBCH &gt;= 13.5 \ and \ BBCH&lt;20; \    BBCH = BBCH+7.5 \tag{12}</span></span></p>
 </section>
 </section>
-<section id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="level3" data-number="1.2.3">
-<h3 data-number="1.2.3" class="anchored" data-anchor-id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.2.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</h3>
+<section id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.1.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</h3>
 <p>Within the model the implicit and simplifying assumption is made that GS 2 stage is more or less closely associated with BBCH 30 [<span class="citation" data-cites="baker1983">Baker and Gallagher (<a href="#ref-baker1983" role="doc-biblioref">1983</a>)</span>]<span class="citation" data-cites="baker1983">(<a href="#ref-baker1983" role="doc-biblioref">Baker and Gallagher, 1983</a>)</span>, but that the initiation of the terminal leaf primordium may be reached a bit earlier at a stage we named (<span class="math inline">GS_{flp}</span>).</p>
 <p>The GS change rate between GS 2 and 3 is calculated as the ratio of the daily temperature minus the base temperature (T<sub>b</sub>, assumed to be 0°C) to the thermal time interval GS 2 to GS 3. This thermal time interval is calculated by the number of leaves not yet expressed at GS 2 minus two (fL), multiplied by the phyllochron plus the temperature sum between BBCH 37 and 39, i.e.&nbsp;‘PH39’:.</p>
 <p><span id="eq-dGS_dt_GS2"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39} \tag{13}</span></span></p>
@@ -386,30 +384,30 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
   \frac{dBBCH}{dt}= \min \left( \frac{2\max (0,T-{{T}_{b}})}{\text{Ph39}},(40-BBCH) \right)
 \tag{15}</span></span></p>
 </section>
-<section id="end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" class="level3" data-number="1.2.4">
-<h3 data-number="1.2.4" class="anchored" data-anchor-id="end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3"><span class="header-section-number">1.2.4</span> End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth (GS3)</h3>
+<section id="end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="end-of-leaf-growth-and-beginning-of-ear-growth-to-end-of-pre-anthesis-ear-growth-gs3"><span class="header-section-number">1.1.4</span> End of leaf growth and beginning of ear growth to end of pre-anthesis ear growth (GS3)</h3>
 <p>The period from the end of leaf growth to the beginning of ear growth is for the GS development rate defined by a length of 2 phytochrons</p>
 <p><span id="eq-dGS_dt_GS3"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{2Phyll} \tag{16}</span></span></p>
 <p>The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation <a href="#eq-dBBCH_dt_GS3" class="quarto-xref">Eq.&nbsp;17</a>.</p>
 <p><span id="eq-dBBCH_dt_GS3"><span class="math display">\frac{dBBCH}{dt}=(4+1.7(GS-3))\cdot 10-BBCH \tag{17}</span></span></p>
 </section>
-<section id="end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" class="level3" data-number="1.2.5">
-<h3 data-number="1.2.5" class="anchored" data-anchor-id="end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4"><span class="header-section-number">1.2.5</span> End of pre-anthesis ear growth to beginning of grain filling (GS4)</h3>
+<section id="end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="end-of-pre-anthesis-ear-growth-to-beginning-of-grain-filling-gs4"><span class="header-section-number">1.1.5</span> End of pre-anthesis ear growth to beginning of grain filling (GS4)</h3>
 <p>The period from the end of pre-anthesis ear growth to the beginning of grain filling is for the GS development rate defined by a length of 200 degree days:</p>
 <p><span id="eq-dGS_dt_GS4"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{200} \tag{18}</span></span></p>
 <p>The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation <a href="#eq-dBBCH_dt_GS4" class="quarto-xref">Eq.&nbsp;19</a>.</p>
 <p><span id="eq-dBBCH_dt_GS4"><span class="math display">\frac{dBBCH}{dt}=(5.7+1.4(GS-4))\cdot 10-BBCH \tag{19}</span></span></p>
 </section>
-<section id="grain-filling-gs5" class="level3" data-number="1.2.6">
-<h3 data-number="1.2.6" class="anchored" data-anchor-id="grain-filling-gs5"><span class="header-section-number">1.2.6</span> Grain filling (GS5)</h3>
+<section id="grain-filling-gs5" class="level3" data-number="1.1.6">
+<h3 data-number="1.1.6" class="anchored" data-anchor-id="grain-filling-gs5"><span class="header-section-number">1.1.6</span> Grain filling (GS5)</h3>
 <p>The period of grain filling is for the GS development rate defined by a genotype specific temperature sum and the effective temperature during grain filling. The latter is calculated as the mean temperature minus the base temperature. The effective temperature is divided by the temperature sum for grain filling (TSumGF) to get the rate of change of GS 5. :</p>
 <p><span id="eq-dGS_dt_GS5"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,(T-{{T}_{b}})-1)}{TSumGF} \tag{20}</span></span></p>
 <p><span id="eq-TSumGF"><span class="math display">TSumGF = \frac{(P5+21.5)}{0.05} \tag{21}</span></span></p>
 <p>The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation <a href="#eq-dBBCH_dt_GS5" class="quarto-xref">Eq.&nbsp;22</a>.</p>
 <p><span id="eq-dBBCH_dt_GS5"><span class="math display">\frac{dBBCH}{dt}=(7.1+1.9(GS-5))\cdot 10-BBCH \tag{22}</span></span></p>
 </section>
-<section id="end-of-grain-filling-to-harvest-gs6" class="level3" data-number="1.2.7">
-<h3 data-number="1.2.7" class="anchored" data-anchor-id="end-of-grain-filling-to-harvest-gs6"><span class="header-section-number">1.2.7</span> End of grain filling to harvest (GS6)</h3>
+<section id="end-of-grain-filling-to-harvest-gs6" class="level3" data-number="1.1.7">
+<h3 data-number="1.1.7" class="anchored" data-anchor-id="end-of-grain-filling-to-harvest-gs6"><span class="header-section-number">1.1.7</span> End of grain filling to harvest (GS6)</h3>
 <p>The period from the end of grain filling to harvest is for the GS development rate defined by a length of 250 degree days:</p>
 <p><span id="eq-dGS_dt_GS6"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{250} \tag{23}</span></span></p>
 <p>The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation <a href="#eq-dBBCH_dt_GS6" class="quarto-xref">Eq.&nbsp;24</a>.</p>
@@ -419,7 +417,7 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
 </section>
 <section id="dry-matter-production" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Dry matter production</h1>
-<p>The daily dry matter accumulation ( <span class="math inline">\frac{d{W_{tot}}}{dt}</span>) is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE<sub>pot</sub>). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO<sub>2</sub> concentration of the atmosphere as described in the following sections.</p>
+<p>The daily dry matter accumulation ( <span class="math inline">\frac{d{W_{tot}}}{dt}</span>) of the canopy is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. Within the source code the term <em>carbo</em> is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE<sub>pot</sub>). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO<sub>2</sub> concentration of the atmosphere as described in the following sections.</p>
 <div class="cell" data-ref-label="Modelscheme" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-Modelscheme" class="quarto-figure quarto-figure-center quarto-float anchored">
@@ -427,7 +425,7 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
 <div aria-describedby="fig-Modelscheme-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-Modelscheme">flowchart LR
-  A(LUE) -.-&gt; F
+  A(LUE&lt;sub&gt;eff&lt;/sup&gt;) -.-&gt; F
   C(f&lt;sub&gt;T&lt;/sup&gt;) -.-&gt; A
   D(SWDF) -.-&gt; A
   E(Q) --&gt; F{dW/dt}
@@ -437,6 +435,9 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
   J((LUE&lt;sub&gt;pot&lt;/sub&gt;)) -.-&gt; A
   K(f&lt;sub&gt;SLN&lt;/sub&gt;) -.-&gt; A
   L(SLN) -.-&gt; K
+  M(f&lt;sub&gt;CO2&lt;/sub&gt;) -.-&gt; A
+  N(CO&lt;sub&gt;2&lt;/sub&gt;) -.-&gt; M
+  O(CWSI) -.-&gt; M
   
 
 </pre>
@@ -520,17 +521,54 @@ Figure&nbsp;7: Relation between RT and SWDF for different values of pSWDF
 </div>
 </div>
 </section>
-</section>
-<section id="nitrogen-limitations" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="nitrogen-limitations"><span class="header-section-number">2.3</span> Nitrogen limitations</h2>
-<p>Consistent with <span class="citation" data-cites="sinclair1989">(<a href="#ref-sinclair1989" role="doc-biblioref">Sinclair and Horie, 1989</a>)</span> , <span class="citation" data-cites="meinke1997">(<a href="#ref-meinke1997" role="doc-biblioref">Meinke et al., 1997</a>)</span> and <span class="citation" data-cites="meinke1998">(<a href="#ref-meinke1998" role="doc-biblioref">Meinke et al., 1998</a>)</span> HumeWheat uses an SLN threshold value SLN<sub>crit</sub> [g N<sup>.</sup>cm<sup>-2</sup>] below which a linear LUE reduction factor (f<sub>SLN</sub>) is applied.</p>
-<p>In a first step the optimum SLN value (SLN<sub>opt</sub>) is calculated from the initial SLN value (SLN<sub>max</sub>) and the green area index (GAI) according to the following equation:</p>
+<section id="nitrogen-limitations" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="nitrogen-limitations"><span class="header-section-number">2.2.3</span> Nitrogen limitations</h3>
+<p>Consistent with <span class="citation" data-cites="sinclair1989">(<a href="#ref-sinclair1989" role="doc-biblioref">Sinclair and Horie, 1989</a>)</span> , <span class="citation" data-cites="meinke1997">(<a href="#ref-meinke1997" role="doc-biblioref">Meinke et al., 1997</a>)</span> and <span class="citation" data-cites="meinke1998">(<a href="#ref-meinke1998" role="doc-biblioref">Meinke et al., 1998</a>)</span> HumeWheat uses an SLN threshold value SLN<sub>crit</sub> [g N<sup>.</sup>cm<sup>-2</sup>] below which a LUE reduction factor (f<sub>SLN</sub>) is applied.</p>
+<p>In a first step the optimum SLN value (SLN<sub>crit</sub>) is calculated from the initial SLN value (<span class="math inline">SLN_{crit_{int}}</span>) and the green area index (GAI) according to the following equation:</p>
 <p><span id="eq-SLNcrit"><span class="math display">SLN_{crit} =SLN_{crit_{int}}+SLN_{crit_{inc}} \cdot GAI; \tag{32}</span></span></p>
-<p>The values of the parameters SLN<sub>crit</sub>int and SLN<sub>crit</sub>inc are set to 3.74 and -0.228, respectively. The value of SLN<sub>crit</sub>int is the initial SLN value at GAI = 0. The value of SLN<sub>crit</sub>inc is the increase of the SLN<sub>crit</sub> value per unit of GAI.</p>
+<p>The values of the parameters <span class="math inline">SLN_{crit_{int}}</span> and <span class="math inline">SLN_{crit_{inc}}</span> are set to 3.74 and -0.228, respectively <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>. The value of <span class="math inline">SLN_{crit_{int}}</span> is the initial SLN value at GAI = 0. The value of <span class="math inline">SLN_{crit_{inc}}</span> is the increase of the SLN<sub>crit</sub> value per unit of GAI.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-SLNcrit" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-SLNcrit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="HUMEWheatDocu_files/figure-html/fig-SLNcrit-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-SLNcrit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Critical SLN value SLNcrit as a function of GAI
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The <a href="#fig-SLN_GAI" class="quarto-xref">Figure&nbsp;9</a> from <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span> gives the original source of this relationship derived from an analysis of experimental data using quartile regression.</p>
+<div id="fig-SLN_GAI" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-SLN_GAI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="SLN_GAI.gif" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-SLN_GAI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Relationship between maximum overall specific leaf nitrogen (SLN: upper 10% quantile of green area index (GAI) class intervals) and GAI. Intercept: 3·74 (P &lt; 0·001); slope: –0·228 (P &lt; 0·001).
+</figcaption>
+</figure>
+</div>
 <p>Before booting SLN<sub>crit</sub> is always lower than SLN<sub>opt</sub>.</p>
+<p>A nitrogen limitation factor SLNI is calculated from the ratio of the actual SLN value (SLN) and the critical SLN value (SLN<sub>crit</sub>) according to the following equation:</p>
 <p><span id="eq-SLNI"><span class="math display">SLNI = min \left( 1, \frac {SLN} {SLN_{crit}} \right) \tag{33}</span></span></p>
-<p>The factor SLNI is used to calculate the nitrogen limitation factor f<sub>SLN</sub> according to the following equation:</p>
-<p><span id="eq-CarboRed"><span class="math display">Carbo_{Red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right) \tag{34}</span></span></p>
+<p>The obtained value then SLNI is used to calculate the nitrogen limitation factor Carbo<sub>red</sub> according to the following non-linear equation:</p>
+<p><span id="eq-CarboRed"><span class="math display">Carbo_{red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right) \tag{34}</span></span></p>
+<p>The values of the parameters SLNI<sub>a</sub>, SLNI<sub>b</sub> and SLNI<sub>c</sub> are set to -0.197, 2.8 and -1.6, respectively <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>. The value of SLNI<sub>a</sub> is the intercept of the Carbo<sub>red</sub> function. The value of SLNI<sub>b</sub> is the slope of the Carbo<sub>red</sub> function. The value of SLNI<sub>c</sub> is the curvature of the Carbo<sub>red</sub> function. The Carbo<sub>red</sub> function is shown in <a href="#fig-CarboRed" class="quarto-xref">Figure&nbsp;11</a>.<br>
+The name of the variable Carbo<sub>red</sub> is derived from the original CERES-Wheat source code where it is primarily used to calculate the reduction of the photosynthesis during ripening/senescence. We use it here to calculate the general reduction of the LUE due to nitrogen limitation.</p>
+<div id="fig-rLUE_SLNI" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rLUE_SLNI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="rLUE_SLNI.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rLUE_SLNI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Relationship between relative light use efficiency and the index SLNI (from <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>).
+</figcaption>
+</figure>
+</div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-CarboRed" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
@@ -539,23 +577,20 @@ Figure&nbsp;7: Relation between RT and SWDF for different values of pSWDF
 <img src="HUMEWheatDocu_files/figure-html/fig-CarboRed-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-CarboRed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Carbohydrate reduction factor CarboRed as a function of SLNI
+Figure&nbsp;11: Carbohydrate reduction factor CarboRed as a function of SLNI
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Since a soil N limitation is not implemented yet, f<sub>SLN</sub> &lt; SLN<sub>crit1</sub> occurs only during N remobilization from the vegetative organs to grains, i.e.&nbsp;is a factor that accounts for senescense. The daily dry matter accumulation is calculated as follows:</p>
-<p><span class="math display">\frac{d{W_{tot}}}{dt} = f_{T} \cdot f_{int} \cdot f_{SLN} \cdot f_{SW} \cdot f_{N} \cdot LUE_{pot} \cdot I</span></p>
-<p><span class="math display"> \frac{d{{W}_{tot}}}{dt}= LUE_{pot} \cdot PAR\text{(t)} \cdot (1-{e^{-{k_{PAR}} \cdot LAI\text{(t)}}}) \cdot {f_{T}}\text{(t)}\cdot \min ({f_{RT}}\text{(t)},{f_{SLN}}\text{(t)})
-</span> # Dry Matter Partitioning</p>
-<section id="co2-concentration" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="co2-concentration"><span class="header-section-number">2.3.1</span> CO<sub>2</sub> concentration</h3>
+</section>
+<section id="co2-concentration" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="co2-concentration"><span class="header-section-number">2.2.4</span> CO<sub>2</sub> concentration</h3>
 <p>The effect of a varying CO<sub>2</sub> concentration on LUE is optionally calculated using a CO<sub>2</sub> effect factor f<sub>CO</sub>2~ [0..1]. Thereby an interaction with the crop water stress status is assumed. The CO<sub>2</sub> effect factor is calculated as follows:</p>
 <p><span id="eq-fCO2"><span class="math display">f_{CO2} = max\left( f_{CO_2min}, \ f_{CO_2min} \cdot  \left(\left[CO_2\right]-\tau \right)^{fCO_2}  \right) \tag{35}</span></span></p>
 <p>with</p>
 <p><span id="eq-fCO2min"><span class="math display"> f_{CO_2min} = (f_{CO_2}scale+CWSI \cdot f_{CWSI}) \tag{36}</span></span></p>
-<p>The crop water stress index is calculated from 1-TransIntRatio (0 = no drought stress, 1 = maximum drought stress). The interaction of CWSI and CO<sub>2</sub> concentration is described by the parameter f<sub>CWSI</sub>. The parameter f<sub>CO</sub>2~scale is the CO<sub>2</sub> effect factor at the CO<sub>2</sub> concentration of the compensation point (<span class="math inline">\tau</span>). The parameter f<sub>CO</sub>2~ is the slope of the CO<sub>2</sub> effect factor curve. The parameter <span class="math inline">\tau</span> is the CO<sub>2</sub> concentration at which the CO<sub>2</sub> effect factor is equal to f<sub>CO</sub>2~scale. The CO<sub>2</sub> effect factor is limited to a value between 0 and 1. It follows from <a href="#fig-fCO2eff" class="quarto-xref">Figure&nbsp;9</a> that the CO<sub>2</sub> effect factor increases with increasing CO<sub>2</sub> concentration and increasing CWSI, which means that the effect of CO<sub>2</sub> on LUE is stronger under drought stress conditions.</p>
+<p>The crop water stress index is calculated from 1-TransIntRatio (0 = no drought stress, 1 = maximum drought stress). The interaction of CWSI and CO<sub>2</sub> concentration is described by the parameter f<sub>CWSI</sub>. The parameter f<sub>CO</sub>2~scale is the CO<sub>2</sub> effect factor at the CO<sub>2</sub> concentration of the compensation point (<span class="math inline">\tau</span>). The parameter f<sub>CO</sub>2~ is the slope of the CO<sub>2</sub> effect factor curve. The parameter <span class="math inline">\tau</span> is the CO<sub>2</sub> concentration at which the CO<sub>2</sub> effect factor is equal to f<sub>CO</sub>2~scale. The CO<sub>2</sub> effect factor is limited to a value between 0 and 1. It follows from <a href="#fig-fCO2eff" class="quarto-xref">Figure&nbsp;12</a> that the CO<sub>2</sub> effect factor increases with increasing CO<sub>2</sub> concentration and increasing CWSI, which means that the effect of CO<sub>2</sub> on LUE is stronger under drought stress conditions.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-fCO2eff" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
@@ -564,57 +599,107 @@ Figure&nbsp;8: Carbohydrate reduction factor CarboRed as a function of SLNI
 <img src="HUMEWheatDocu_files/figure-html/fig-fCO2eff-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fCO2eff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: CO2 effect factor fCO2 as a function of CO2 concentration and SWDF
+Figure&nbsp;12: CO2 effect factor fCO2 as a function of CO2 concentration and SWDF
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="canopy" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="canopy"><span class="header-section-number">2.3.2</span> Canopy</h3>
-<section id="leaf-area-development" class="level4" data-number="2.3.2.1">
-<h4 data-number="2.3.2.1" class="anchored" data-anchor-id="leaf-area-development"><span class="header-section-number">2.3.2.1</span> Leaf Area Development</h4>
 </section>
-<section id="senescence" class="level4" data-number="2.3.2.2">
-<h4 data-number="2.3.2.2" class="anchored" data-anchor-id="senescence"><span class="header-section-number">2.3.2.2</span> Senescence</h4>
-</section>
-</section>
-<section id="ressource-limitations" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="ressource-limitations"><span class="header-section-number">2.3.3</span> Ressource Limitations</h3>
-<section id="nitrogen" class="level4" data-number="2.3.3.1">
-<h4 data-number="2.3.3.1" class="anchored" data-anchor-id="nitrogen"><span class="header-section-number">2.3.3.1</span> Nitrogen</h4>
-</section>
-<section id="water" class="level4" data-number="2.3.3.2">
-<h4 data-number="2.3.3.2" class="anchored" data-anchor-id="water"><span class="header-section-number">2.3.3.2</span> Water</h4>
+<section id="daily-dry-matter-accumulation" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="daily-dry-matter-accumulation"><span class="header-section-number">2.3</span> Daily dry matter accumulation</h2>
+<p>The daily dry matter accumulation rate of the canopy is calculated as follows:</p>
+<p><span id="eq-PCARB"><span class="math display">PCARB = LUE_{pot} \cdot PAR \cdot f_{int} \cdot min(f_T,Tempf_{surface})  \cdot f_{CO2} \cdot min(SWDF, Carbo_{red}) \tag{37}</span></span></p>
+<p>where <span class="math inline">LUE</span> is the light use efficiency, <span class="math inline">PAR</span> is the photosynthetically active radiation, <span class="math inline">f_{int}</span> is the fraction of intercepted PAR, <span class="math inline">f_T</span> is the temperature effect factor, <span class="math inline">Tempf_{surface}</span> is the temperature effect factor calculated from the canopy surface temperature, <span class="math inline">f_{CO2}</span> is the CO<sub>2</sub> effect factor, <span class="math inline">SWDF</span> is the soil water deficit factor and <span class="math inline">Carbo_{red}</span> is the nitrogen limitation factor.</p>
+<p>The daily dry matter per plant is calculated as follows:</p>
+<p><span id="eq-CARBO"><span class="math display"> CARBO = PCARB / Plants \tag{38}</span></span></p>
+<p>From the daily dry matter accumulation rate and the amount of intercepted radiation and the <em>effective</em> radiation use efficiency the daily dry matter accumulation rate of the canopy is calculated.</p>
+<p><span id="eq-LUEeff"><span class="math display">LUE_{eff} =   \frac {PCARB}{IPAR} \tag{39}</span></span></p>
+<p>where <span class="math inline">IPAR</span> is the intercepted PAR. T</p>
+<p>The effective radiation use efficiency thereby sums up the different limitations of the LUE into a single value.</p>
 </section>
 </section>
+<section id="dry-matter-partitioning" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Dry Matter Partitioning</h1>
+<p>The daily dry matter accumulation rate of the canopy is partitioned into the different plant organs. The partitioning of the daily dry matter accumulation rate into the different plant organs is in contrast to many other crop growth models based on the concept of allometric relationships between the organs of the crop. The other governing principle is the concept N dilution, i.e.&nbsp;decreasing N concentrations of the organs.</p>
+<p>Effects of nitrogen shortage and drought stress on the partitioning of dry matter are considered in the model, but can be switched off by setting the respectives model options.</p>
+<section id="allometric-leaf-stem-partitioning" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="allometric-leaf-stem-partitioning"><span class="header-section-number">3.1</span> Allometric Leaf Stem Partitioning</h2>
+<section id="drought-effects" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="drought-effects"><span class="header-section-number">3.1.1</span> Drought effects</h3>
+<p>The partitioning of dry matter between leaf and stem is influenced by the soil water potential. Under water stress conditions the partitioning of dry matter to the stem is increased (<a href="#fig-AlloDrought" class="quarto-xref">Figure&nbsp;13</a>).</p>
+<div id="fig-AlloDrought" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-AlloDrought-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="jac12165-fig-0002-m.jpg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-AlloDrought-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: Relationship between the log-transformed leaf [ln(DML)] and stem mass [ln(DMS)] for W0 and W100 treatments (g=slope). W100 (black): r2 =0.96, n = 26; W0 (white): r2 =0.87, n = 23.
+</figcaption>
+</figure>
+</div>
+<p>Within the dry matter module the variable kf<sub>d</sub> describes the influence of <em>psi<sub>root</sub></em>, i.e.&nbsp;the absolute, non negative weighted average of the soil hydraulic potential on leaf stem partitioning.</p>
+<p>The value of k_f is calculated as follows:</p>
+<p><span id="eq-kf_d"><span class="math display">kf_d = max(1,\ 1 + (| psi_{root} | - psi_{crit}) \cdot psi_s) \tag{40}</span></span></p>
+<p>where psi<sub>root</sub> is the soil hydraulic potential, psi<sub>crit</sub> is the critical soil water potential at which the leaf stem partitioning is 1 and psi<sub>s</sub> is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi<sub>s</sub> is set to 0.296 in the model. The value of psi<sub>crit</sub> is set to a default of 2.24 MPa in the model. These parameters are from <span class="citation" data-cites="ratjen2016">(<a href="#ref-ratjen2016" role="doc-biblioref">Ratjen et al., 2016</a>)</span>.</p>
+<p>The value of psi<sub>crit</sub> is the critical soil water potential at which the leaf stem partitioning is 1. The value of psi<sub>s</sub> is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi<sub>s</sub> is set to 0.296 in the model. The value of psi<sub>crit</sub> is set to a default of 2.24 MPa in the model.</p>
+<p><span id="eq-kf_n"><span class="math display">kf_n = max(1,\ 1 + (NNI_{crit} - NNI) \cdot NNI_{inc}) \tag{41}</span></span></p>
+<p>where NNI<sub>crit</sub> is the critical nitrogen nutrition index at which the leaf stem partitioning is 1, NNI<sub>inc</sub> is the increase of the leaf stem partitioning per unit of NNI and NNI is the actual nitrogen nutrition index. The default value of NNI<sub>inc</sub> is set to 0.595 in the model. The value of NNI<sub>crit</sub> is set to a default of 1.377 in the model.</p>
+<p>The stem fraction of shoot dry matter increase is calculated from an allometric relation ship:</p>
+<p><span id="eq-fStem"><span class="math display">f_{stem*} = (1 - \frac{1}{ (1 + e^h \cdot LFWT^{g-1} \cdot g))} \tag{42}</span></span></p>
+<p>where LFWT is the leaf DM per square meter and h and g are parameters of the allometric relationship. The default values of g and h are set to 1.46 and -2.13 in the model.</p>
+<p><span id="eq-fStem"><span class="math display">f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n)) \tag{43}</span></span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-fStem" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fStem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="HUMEWheatDocu_files/figure-html/fig-fStem-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fStem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf dry matter and NNI (left) and as a function of leaf dry matter and psi_root (right)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="evapotranspiration" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="evapotranspiration"><span class="header-section-number">2.4</span> Evapotranspiration</h2>
 </section>
 </section>
-<section id="soil-water" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Soil water</h1>
+<section id="leaf-area-development" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Leaf Area Development</h1>
+<section id="senescence" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="senescence"><span class="header-section-number">4.1</span> Senescence</h2>
 </section>
-<section id="implementation" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Implementation</h1>
+</section>
+<section id="evapotranspiration" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Evapotranspiration</h1>
+</section>
+<section id="soil-water" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Soil water</h1>
+</section>
+<section id="implementation" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Implementation</h1>
 <p>The model was implemented using an object oriented component library termed HUME <span class="citation" data-cites="kage1999">(<a href="#ref-kage1999" role="doc-biblioref">Kage and Stützel, 1999</a>)</span> on the basis of Embarcadero® Delphi® 2010 (Embarcadero Technologies, Inc., USA). The model is comprised of submodels describing plant growth and development, soil water dynamics, and evapotranspiration.</p>
 </section>
-<section id="miscellaneous" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Miscellaneous</h1>
-<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;37</a>).</p>
+<section id="miscellaneous" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Miscellaneous</h1>
+<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;44</a>).</p>
 <p><span id="eq-effective-temperature"><span class="math display">T_{eff}  = \begin{cases}
 T_{air} - T_{base} &amp; \text{if}~T&gt;0\\
 0 &amp; \text{if}~T&lt;2
-\end{cases} \tag{37}</span></span></p>
+\end{cases} \tag{44}</span></span></p>
 </section>
-<section id="parameters" class="level1 unnumbered" data-number="6">
+<section id="parameters" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Parameters</h1>
+</section>
+<section id="literature" class="level1 unnumbered" data-number="10">
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">6 Parameters</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">10 Literature</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-baker1983" class="csl-entry" role="listitem">
 Baker, C.K., Gallagher, J.N., 1983. The development of winter wheat in the field. 1. Relation between apical development and plant morphology within and between seasons. The Journal of Agricultural Science 101, 327–335. <a href="https://doi.org/10.1017/s0021859600037631">https://doi.org/10.1017/s0021859600037631</a>
 </div>
@@ -654,11 +739,17 @@ Meinke, H., L. Hammer, G., Keulen, H. van, Rabbinge, R., Keating, B.A., 1997. Im
 <div id="ref-neukam2016" class="csl-entry" role="listitem">
 Neukam, D., Ahrends, H., Luig, A., Manderscheid, R., Kage, H., 2016. Integrating Wheat Canopy Temperatures in Crop System Models. Agronomy 6, 7. <a href="https://doi.org/10.3390/agronomy6010007">https://doi.org/10.3390/agronomy6010007</a>
 </div>
+<div id="ref-neukam2015" class="csl-entry" role="listitem">
+Neukam, D., Böttcher, U., Kage, H., 2015. Modelling Wheat Stomatal Resistance in Hourly Time Steps from Micrometeorological Variables and Soil Water Status. Journal of Agronomy and Crop Science 202, 174–191. <a href="https://doi.org/10.1111/jac.12133">https://doi.org/10.1111/jac.12133</a>
+</div>
 <div id="ref-ratjen2015" class="csl-entry" role="listitem">
-RATJEN, A.M., KAGE, H., 2015. Nitrogen-limited light use efficiency in wheat crop simulators: comparing three model approaches. The Journal of Agricultural Science 154, 1090–1101. <a href="https://doi.org/10.1017/s0021859615001082">https://doi.org/10.1017/s0021859615001082</a>
+RATJEN, A.M., KAGE, H., 2015a. Nitrogen-limited light use efficiency in wheat crop simulators: comparing three model approaches. The Journal of Agricultural Science 154, 1090–1101. <a href="https://doi.org/10.1017/s0021859615001082">https://doi.org/10.1017/s0021859615001082</a>
 </div>
 <div id="ref-ratjen2015b" class="csl-entry" role="listitem">
 Ratjen, A.M., Kage, H., 2015. Forecasting yield via reference- and scenario calculations. Computers and Electronics in Agriculture 114, 212–220. <a href="https://doi.org/10.1016/j.compag.2015.03.020">https://doi.org/10.1016/j.compag.2015.03.020</a>
+</div>
+<div id="ref-ratjen2015a" class="csl-entry" role="listitem">
+RATJEN, A.M., KAGE, H., 2015b. Nitrogen-limited light use efficiency in wheat crop simulators: comparing three model approaches. The Journal of Agricultural Science 154, 1090–1101. <a href="https://doi.org/10.1017/s0021859615001082">https://doi.org/10.1017/s0021859615001082</a>
 </div>
 <div id="ref-ratjen2016" class="csl-entry" role="listitem">
 Ratjen, A.M., Neukam, D., Kage, H., 2016. A Simple Drought<span>-</span>Sensitive Model for Leaf&nbsp;:&nbsp;Stem Partitioning of Wheat. Journal of Agronomy and Crop Science 202, 300–308. <a href="https://doi.org/10.1111/jac.12165">https://doi.org/10.1111/jac.12165</a>

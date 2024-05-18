@@ -54,15 +54,14 @@ options("citation_format" = "pandoc")
 
 ```
 
-This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [@ratjen2016][@ratjen2015][@ratjen2016][@ratjen2015b], Ulf Böttcher, Adam Luig, Dorothee Neukam [@neukam2016] and others. It is in many aspects based on the CERES-Wheat model (CW) [@ritchie2015]. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
-
+This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [@ratjen2016][@ratjen2015][@ratjen2016][@ratjen2015b], Ulf Böttcher, Adam Luig, Dorothee Neukam [@neukam2016] [@neukam2015] and others. It is in many aspects based on the CERES-Wheat model (CW) [@ritchie2015]. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
 
 # Development
 
 The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage ([@lancashire1991a]). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
 
 | GS  | BBCH | Phase                                                                            |
-|------------------|------------------|-------------------------------------|
+|-------------------|-------------------|-----------------------------------|
 | 7   | 00   | Fallow                                                                           |
 | 8   | 00   | Sowing to germination                                                            |
 | 9   | 05   | Germination to emergence                                                         |
@@ -223,10 +222,6 @@ At BBCH 13.5 there is a switch to BBCH 21, because simultaneously to the appeara
 
 The plastochron is the inverse of the rate of leaf initiation. It is assumed to be constant during the time from sowing to the end of leaf initation. It defines the rate of leaf initiation and together with the initial number of leaf primordia of the embryo at sowing the number of initiated leaves and with the GS stage when leaf initation ceases the number of leaves on the main stem.
 
-
-
-
-
 $$If \ \ BBCH >= 13.5 \ and \ BBCH<20; \    BBCH = BBCH+7.5$$ {#eq-BBCH_jumpto21}
 
 ### Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)
@@ -297,7 +292,7 @@ $$\frac{dBBCH}{dt}=(9+(GS-6))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS6}
 
 # Dry matter production
 
-The daily dry matter accumulation ( $\frac{d{W_{tot}}}{dt}$) is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
+The daily dry matter accumulation ( $\frac{d{W_{tot}}}{dt}$) of the canopy is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. Within the source code the term *carbo* is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
 
 ```{mermaid}
 %%| fig-cap: Calculation of daily dry matter production in HUMEWheat. 
@@ -306,7 +301,7 @@ The daily dry matter accumulation ( $\frac{d{W_{tot}}}{dt}$) is calculated accor
 %%| ref-label: Modelscheme
 
 flowchart LR
-  A(LUE) -.-> F
+  A(LUE<sub>eff</sup>) -.-> F
   C(f<sub>T</sup>) -.-> A
   D(SWDF) -.-> A
   E(Q) --> F{dW/dt}
@@ -316,6 +311,9 @@ flowchart LR
   J((LUE<sub>pot</sub>)) -.-> A
   K(f<sub>SLN</sub>) -.-> A
   L(SLN) -.-> K
+  M(f<sub>CO2</sub>) -.-> A
+  N(CO<sub>2</sub>) -.-> M
+  O(CWSI) -.-> M
   
 
 ```
@@ -449,7 +447,7 @@ df_SWDF <- df_SWDF %>% mutate(pSWDF = as.factor(pSWDF))
 
 ggplot(data = df_SWDF, aes(x = RT, y = SWDF, color=pSWDF) ) +
   geom_line(size=2) +
-  labs(x = "RT", y = "SWDF") +
+  labs(x = "Relative Transpiration + Interception [-]", y = "SWDF [-]") +
   theme_bw(base_size = 20) +
   scale_color_aaas()  
 
@@ -457,21 +455,65 @@ ggplot(data = df_SWDF, aes(x = RT, y = SWDF, color=pSWDF) ) +
 
 ### Nitrogen limitations
 
-Consistent with [@sinclair1989] , [@meinke1997] and [@meinke1998] HumeWheat uses an SLN threshold value SLN~crit~ \[g N^.^cm^-2^\] below which a linear LUE reduction factor (f~SLN~) is applied.
+Consistent with [@sinclair1989] , [@meinke1997] and [@meinke1998] HumeWheat uses an SLN threshold value SLN~crit~ \[g N^.^cm^-2^\] below which a LUE reduction factor (f~SLN~) is applied.
 
-In a first step the optimum SLN value (SLN~opt~) is calculated from the initial SLN value (SLN~max~) and the green area index (GAI) according to the following equation:
+In a first step the optimum SLN value (SLN~crit~) is calculated from the initial SLN value ($SLN_{crit_{int}}$) and the green area index (GAI) according to the following equation:
 
 $$SLN_{crit} =SLN_{crit_{int}}+SLN_{crit_{inc}} \cdot GAI;$$ {#eq-SLNcrit}
 
-The values of the parameters SLN~crit~int and SLN~crit~inc are set to 3.74 and -0.228, respectively. The value of SLN~crit~int is the initial SLN value at GAI = 0. The value of SLN~crit~inc is the increase of the SLN~crit~ value per unit of GAI.
+The values of the parameters $SLN_{crit_{int}}$ and $SLN_{crit_{inc}}$ are set to 3.74 and -0.228, respectively [@ratjen2015a]. The value of $SLN_{crit_{int}}$ is the initial SLN value at GAI = 0. The value of $SLN_{crit_{inc}}$ is the increase of the SLN~crit~ value per unit of GAI.
+
+```{r}
+#| label: fig-SLNcrit
+#| ref-label: SLNcritplot
+#| fig-cap: Critical SLN value SLNcrit as a function of GAI
+#| fig-align: center
+#| echo: false
+
+SLNcrit <- function(GAI, SLNcrit_int, SLNcrit_inc){
+  SLNcrit <- SLNcrit_int + SLNcrit_inc * GAI
+  return(SLNcrit)
+}
+
+SLNcrit_int <- 3.74
+SLNcrit_inc <- -0.228
+
+GAI <- seq(0, 5, 0.01)
+
+df_SLNcrit <- data.frame(GAI = GAI)
+
+df_SLNcrit$SLNcrit <- SLNcrit(df_SLNcrit$GAI, SLNcrit_int, SLNcrit_inc)
+
+ggplot(data = df_SLNcrit, aes(x = GAI, y = SLNcrit, color=SLNcrit)) +
+  geom_line(size=2) +
+  labs(x = "GAI [m^2 m^-2]", y = "SLNcrit [g N cm^-2]") +
+  scale_color_gradient(low = "yellow", high = "darkgreen") +
+  theme_bw(base_size = 20) +
+  scale_y_continuous(limits = c(0, 5)) 
+
+```
+
+The @fig-SLN_GAI from [@ratjen2015a] gives the original source of this relationship derived from an analysis of experimental data using quartile regression.
+
+![Relationship between maximum overall specific leaf nitrogen (SLN: upper 10% quantile of green area index (GAI) class intervals) and GAI. Intercept: 3·74 (P \< 0·001); slope: –0·228 (P \< 0·001).](SLN_GAI.gif){#fig-SLN_GAI}
 
 Before booting SLN~crit~ is always lower than SLN~opt~.
 
+A nitrogen limitation factor SLNI is calculated from the ratio of the actual SLN value (SLN) and the critical SLN value (SLN~crit~) according to the following equation:
+
 $$SLNI = min \left( 1, \frac {SLN} {SLN_{crit}} \right)$$ {#eq-SLNI}
 
-The factor SLNI is used to calculate the nitrogen limitation factor f~SLN~ according to the following equation:
+The obtained value then SLNI is used to calculate the nitrogen limitation factor Carbo~red~ according to the following non-linear equation:
 
-$$Carbo_{Red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right)$$ {#eq-CarboRed}
+$$Carbo_{red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right)$$ {#eq-CarboRed}
+
+The values of the parameters SLNI~a~, SLNI~b~ and SLNI~c~ are set to -0.197, 2.8 and -1.6, respectively [@ratjen2015a]. The value of SLNI~a~ is the intercept of the Carbo~red~ function. The value of SLNI~b~ is the slope of the Carbo~red~ function. The value of SLNI~c~ is the curvature of the Carbo~red~ function. The Carbo~red~ function is shown in @fig-CarboRed.\
+The name of the variable Carbo~red~ is derived from the original CERES-Wheat source code where it is primarily used to calculate the reduction of the photosynthesis during ripening/senescence. We use it here to calculate the general reduction of the LUE due to nitrogen limitation.
+
+
+![Relationship between relative light use efficiency and the index SLNI (from  [@ratjen2015a]).](rLUE_SLNI.png){#fig-rLUE_SLNI}
+
+
 
 ```{r}
 #| label: fig-CarboRed
@@ -504,13 +546,6 @@ ggplot(data = df_CarboRed, aes(x = SLNI, y = CarboRed, color=SLNI)) +
 
 
 ```
-
-Since a soil N limitation is not implemented yet, f~SLN~ \< SLN~crit1~ occurs only during N remobilization from the vegetative organs to grains, i.e. is a factor that accounts for senescense. The daily dry matter accumulation is calculated as follows:
-
-$$\frac{d{W_{tot}}}{dt} = f_{T} \cdot f_{int} \cdot f_{SLN} \cdot f_{SW} \cdot f_{N} \cdot LUE_{pot} \cdot I$$
-
-$$ \frac{d{{W}_{tot}}}{dt}= LUE_{pot} \cdot PAR\text{(t)} \cdot (1-{e^{-{k_{PAR}} \cdot LAI\text{(t)}}}) \cdot {f_{T}}\text{(t)}\cdot \min ({f_{RT}}\text{(t)},{f_{SLN}}\text{(t)}) 
-$$ \# Dry Matter Partitioning
 
 ### CO~2~ concentration
 
@@ -563,11 +598,151 @@ ggplot(data = df_fCO2, aes(x = CO2pp, y = fCO2, color=CWSI)) +
 
 ```
 
+## Daily dry matter accumulation
+
+The daily dry matter accumulation rate of the canopy is calculated as follows:
+
+$$PCARB = LUE_{pot} \cdot PAR \cdot f_{int} \cdot min(f_T,Tempf_{surface})  \cdot f_{CO2} \cdot min(SWDF, Carbo_{red})$$ {#eq-PCARB}
+
+where $LUE$ is the light use efficiency, $PAR$ is the photosynthetically active radiation, $f_{int}$ is the fraction of intercepted PAR, $f_T$ is the temperature effect factor, $Tempf_{surface}$ is the temperature effect factor calculated from the canopy surface temperature, $f_{CO2}$ is the CO~2~ effect factor, $SWDF$ is the soil water deficit factor and $Carbo_{red}$ is the nitrogen limitation factor.
+
+The daily dry matter per plant is calculated as follows: 
+
+$$ CARBO = PCARB / Plants$$ {#eq-CARBO}
+
+From the daily dry matter accumulation rate and the amount of intercepted radiation and the *effective* radiation use efficiency the daily dry matter accumulation rate of the canopy is calculated.
+
+$$LUE_{eff} =   \frac {PCARB}{IPAR}$$ {#eq-LUEeff}
+
+where $IPAR$ is the intercepted PAR. T
+
+The effective radiation use efficiency thereby sums up the different limitations of the LUE into a single value.
+
+# Dry Matter Partitioning
+
+The daily dry matter accumulation rate of the canopy is partitioned into the different plant organs. The partitioning of the daily dry matter accumulation rate into the different plant organs is in contrast to many other crop growth models based on the concept of allometric relationships between the organs of the crop. The other governing principle is the concept N dilution, i.e. decreasing N concentrations of the organs.
+
+Effects of nitrogen shortage and drought stress on the partitioning of dry matter are considered in the model, but can be switched off by setting the respectives model options.
+
+## Allometric Leaf Stem Partitioning
+
+### Drought effects
+
+The partitioning of dry matter between leaf and stem is influenced by the soil water potential. Under water stress conditions the partitioning of dry matter to the stem is increased (@fig-AlloDrought).
+
+![Relationship between the log-transformed leaf [ln(DML)] and stem mass [ln(DMS)] for W0 and W100 treatments (g=slope). W100 (black): r2 =0.96, n = 26; W0 (white): r2 =0.87, n = 23.](jac12165-fig-0002-m.jpg){#fig-AlloDrought}
+
+
+
+Within the dry matter module the variable kf~d~ describes the influence of *psi~root~*, i.e. the absolute, non negative weighted average of the soil hydraulic potential on leaf stem partitioning.
+
+The value of k_f is calculated as follows: 
+
+$$kf_d = max(1,\ 1 + (| psi_{root} | - psi_{crit}) \cdot psi_s)$$ {#eq-kf_d}
+
+where psi~root~ is the soil hydraulic potential, psi~crit~ is the critical soil water potential at which the leaf stem partitioning is 1 and psi~s~ is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi~s~ is set to 0.296 in the model. The value of psi~crit~ is set to a default of 2.24 MPa in the model. These parameters are from [@ratjen2016].
+
+
+
+The value of psi~crit~ is the critical soil water potential at which the leaf stem partitioning is 1. The value of psi~s~ is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi~s~ is set to 0.296 in the model. The value of psi~crit~ is set to a default of 2.24 MPa in the model.
+
+$$kf_n = max(1,\ 1 + (NNI_{crit} - NNI) \cdot NNI_{inc})$$ {#eq-kf_n}
+
+where NNI~crit~ is the critical nitrogen nutrition index at which the leaf stem partitioning is 1, NNI~inc~ is the increase of the leaf stem partitioning per unit of NNI and NNI is the actual nitrogen nutrition index. The default value of NNI~inc~ is set to 0.595 in the model. The value of NNI~crit~ is set to a default of 1.377 in the model.
+
+The stem fraction of shoot dry matter increase is calculated from an allometric relation ship:
+
+$$f_{stem*} = (1 - \frac{1}{ (1 + e^h \cdot LFWT^{g-1} \cdot g))}$$ {#eq-fStem}
+
+where LFWT is the leaf DM per square meter and h and g are parameters of the allometric relationship. The default values of g and h are set to 1.46 and -2.13 in the model.
+
+$$f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n))$$ {#eq-fStem}
+
+```{r}
+#| label: fig-fStem
+#| ref-label: fStemplot
+#| fig-cap: Stem fraction of shoot dry matter increase as a function of leaf dry matter and NNI (left) and as a function of leaf dry matter and psi_root (right)
+#| fig-align: center
+#| echo: false
+#| 
+
+fStem <- function(LFWT, h, g){
+  fStem <- 1 - 1/(1 + exp(h) * LFWT^(g-1) * g)
+  return(fStem)
+}
+
+
+kf_n <- function(NNI, NNI_crit, NNI_inc){
+  kf_n <- pmax(1, 1 + (NNI_crit - NNI) * NNI_inc)
+  return(kf_n)
+}
+
+
+kf_d <- function(psi_root, psi_crit, psi_s){
+  kf_d <- pmax(1, 1 + (abs(psi_root) - psi_crit) * psi_s)
+  return(kf_d)
+}
+
+h <- -2.13
+g <- 1.46
+psi_crit <- 2.24
+psi_s <- 0.296
+
+NNI_crit <- 1.377
+NNI_inc <- 0.595
+
+
+df_fStem <- expand.grid(LFWT = seq(50, 200, 1),
+                        NNI = seq(0.5, 1.5, 0.25))
+library(RColorBrewer)
+myScale_color <- c('#ffffcc','#d9f0a3','#addd8e','#78c679','#31a354','#006837')#brewer.pal(length(unique(df_fStem$NNI)), "GnYl")
+
+
+df_fStem$fStem_ <- fStem(df_fStem$LFWT, h, g)
+df_fStem$kf_n <- kf_n(df_fStem$NNI, NNI_crit, NNI_inc)
+df_fStem$fStem <- pmin(1,df_fStem$fStem_ * df_fStem$kf_n)  
+
+df_fStem$NNI <- as.factor(df_fStem$NNI)
+
+p1 <- ggplot(data = df_fStem, aes(x = LFWT, y = fStem, color=NNI)) +
+  geom_line( size=2) +
+  labs(x = "Leaf dry matter [g m^-2]", y = "fStem [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_manual(values = myScale_color)  +
+  theme(legend.position = "top")
+#p1
+
+
+df_fStem2 <- expand.grid(LFWT = seq(50, 200, 1),
+                        psi_root = seq(1, 5, 1))
+
+df_fStem2$kf_d <- kf_d(df_fStem2$psi_root, psi_crit, psi_s)
+df_fStem2$fStem_ <- fStem(df_fStem2$LFWT, h, g)
+df_fStem2$fStem <- pmin(1, df_fStem2$fStem_ * df_fStem2$kf_d)
+
+df_fStem2$psi_root <- as.factor(df_fStem2$psi_root)
+myScale_color2 <- c('#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594')#brewer.pal(length(unique(df_fStem$NNI)), "GnYl")
+
+p2 <- ggplot(data = df_fStem2, aes(x = LFWT, y = fStem, color=psi_root)) +
+  geom_line( size=2) +
+  labs(x = "Leaf dry matter [g m^-2]", y = "fStem [0..1]") +
+  theme_bw(base_size = 20) +
+  scale_color_manual(values = myScale_color2) +
+  theme(legend.position = "top") +
+  theme(axis.title.y = element_blank()) +
+  theme(axis.text.y = element_blank()) 
+#p2
+
+
+library(patchwork)
+p <- p1 + p2
+p
+
+```
 
 # Leaf Area Development
 
 ## Senescence
-
 
 # Evapotranspiration
 
