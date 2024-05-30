@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Agronomy and Crop Science Group, Kiel University">
-<meta name="dcterms.date" content="2024-05-18">
+<meta name="dcterms.date" content="2024-05-30">
 
 <title>Simulation of Wheat Growth and Development</title>
 <style>
@@ -146,9 +146,20 @@ window.Quarto = {
   </ul></li>
   <li><a href="#dry-matter-partitioning" id="toc-dry-matter-partitioning" class="nav-link" data-scroll-target="#dry-matter-partitioning"><span class="header-section-number">3</span> Dry Matter Partitioning</a>
   <ul>
-  <li><a href="#allometric-leaf-stem-partitioning" id="toc-allometric-leaf-stem-partitioning" class="nav-link" data-scroll-target="#allometric-leaf-stem-partitioning"><span class="header-section-number">3.1</span> Allometric Leaf Stem Partitioning</a>
+  <li><a href="#initialisation" id="toc-initialisation" class="nav-link" data-scroll-target="#initialisation"><span class="header-section-number">3.1</span> Initialisation</a></li>
+  <li><a href="#seedrv-change" id="toc-seedrv-change" class="nav-link" data-scroll-target="#seedrv-change"><span class="header-section-number">3.2</span> SeedRV change</a></li>
+  <li><a href="#allometric-leaf-stem-partitioning" id="toc-allometric-leaf-stem-partitioning" class="nav-link" data-scroll-target="#allometric-leaf-stem-partitioning"><span class="header-section-number">3.3</span> Allometric Leaf Stem Partitioning</a>
   <ul class="collapse">
-  <li><a href="#drought-effects" id="toc-drought-effects" class="nav-link" data-scroll-target="#drought-effects"><span class="header-section-number">3.1.1</span> Drought effects</a></li>
+  <li><a href="#drought-effects" id="toc-drought-effects" class="nav-link" data-scroll-target="#drought-effects"><span class="header-section-number">3.3.1</span> Drought effects</a></li>
+  </ul></li>
+  <li><a href="#leaf-nitrogen-concentration" id="toc-leaf-nitrogen-concentration" class="nav-link" data-scroll-target="#leaf-nitrogen-concentration"><span class="header-section-number">3.4</span> Leaf nitrogen concentration</a>
+  <ul class="collapse">
+  <li><a href="#calc_leaf_n_change" id="toc-calc_leaf_n_change" class="nav-link" data-scroll-target="#calc_leaf_n_change"><span class="header-section-number">3.4.1</span> Calc_Leaf_N_Change</a></li>
+  </ul></li>
+  <li><a href="#grain-filling" id="toc-grain-filling" class="nav-link" data-scroll-target="#grain-filling"><span class="header-section-number">3.5</span> Grain filling</a>
+  <ul class="collapse">
+  <li><a href="#initialisation-1" id="toc-initialisation-1" class="nav-link" data-scroll-target="#initialisation-1"><span class="header-section-number">3.5.1</span> Initialisation</a></li>
+  <li><a href="#grain-filling-1" id="toc-grain-filling-1" class="nav-link" data-scroll-target="#grain-filling-1"><span class="header-section-number">3.5.2</span> Grain filling</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#leaf-area-development" id="toc-leaf-area-development" class="nav-link" data-scroll-target="#leaf-area-development"><span class="header-section-number">4</span> Leaf Area Development</a>
@@ -187,7 +198,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 18, 2024</p>
+      <p class="date">May 30, 2024</p>
     </div>
   </div>
   
@@ -206,7 +217,7 @@ p {
 }
 </style>
 </div>
-<p>This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015">(<a href="#ref-ratjen2015" role="doc-biblioref">RATJEN and KAGE, 2015a</a>)</span>[<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015b">(<a href="#ref-ratjen2015b" role="doc-biblioref">Ratjen and Kage, 2015</a>)</span>, Ulf Böttcher, Adam Luig, Dorothee Neukam <span class="citation" data-cites="neukam2016">(<a href="#ref-neukam2016" role="doc-biblioref">Neukam et al., 2016</a>)</span> <span class="citation" data-cites="neukam2015">(<a href="#ref-neukam2015" role="doc-biblioref">Neukam et al., 2015</a>)</span> and others. It is in many aspects based on the CERES-Wheat model (CW) <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span>. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature [°C], precipitation [mm&nbsp;d<sup>-1</sup>], global radiation [W&nbsp;m<sup>-2</sup>], wind speed [m&nbsp;s<sup>-1</sup>], relative humidity [%] and values derived from these like vapor pressure [mbar] and saturation deficit [mbar].</p>
+<p>This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015">(<a href="#ref-ratjen2015" role="doc-biblioref">RATJEN and KAGE, 2015a</a>)</span>[<span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>]<span class="citation" data-cites="ratjen2015b">(<a href="#ref-ratjen2015b" role="doc-biblioref">Ratjen and Kage, 2015</a>)</span>, Ulf Böttcher, Adam Luig, Dorothee Neukam <span class="citation" data-cites="neukam2016">(<a href="#ref-neukam2016" role="doc-biblioref">Neukam et al., 2016</a>)</span> <span class="citation" data-cites="neukam2015">(<a href="#ref-neukam2015" role="doc-biblioref">Neukam et al., 2015</a>)</span> and others. It is in many aspects based on the CERES-Wheat model (CW) <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span>, but uses different appproaches especially for dry matter and nitrogen partitioning, leaf area expansion and dry matter production. Also the development part is extended in comparison to the original CERES wheat approach as it prdicts BBCH stages on the basis of an explicit simulation of leaf initiation and appearance. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature [°C], precipitation [mm&nbsp;d<sup>-1</sup>], global radiation [W&nbsp;m<sup>-2</sup>], wind speed [m&nbsp;s<sup>-1</sup>], relative humidity [%] and values derived from these like vapor pressure [mbar] and saturation deficit [mbar].</p>
 <section id="development" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Development</h1>
 <p>The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in <span class="citation" data-cites="johnen2012">(<a href="#ref-johnen2012" role="doc-biblioref">Johnen et al., 2012a</a>)</span>. The phenological process in CW is divided into nine developmental or growth stages (GS) according to <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span> (<a href="#tbl-CWDevStages" class="quarto-xref">Table&nbsp;1</a>), the common approach in Europe, however is the BBCH stage (<span class="citation" data-cites="lancashire1991a">(<a href="#ref-lancashire1991a" role="doc-biblioref">LANCASHIRE et al., 1991</a>)</span>). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.</p>
@@ -280,7 +291,7 @@ Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH sta
 </div>
 </figure>
 </div>
-<p>The CW model mainly describes phenological development through the change of GS over time. In CWm we added an explicit simulation of three additional state variables, the leaf number on the main stem (nLMS), the number of initiated leaves on the main stem (inLMS) and the BBCH stage. At emergence nLMS is set to one and inLMS is set to 4 <span class="citation" data-cites="brooking2002a">(<a href="#ref-brooking2002a" role="doc-biblioref">Brooking and Jamieson, 2002</a>)</span>. This is because the embryo at the time of sowing has already three leaf primordia <span class="citation" data-cites="kirby1985">(<a href="#ref-kirby1985" role="doc-biblioref">KIRBY et al., 1985</a>)</span> and that an additional primordium is assumed to be produced until emergence. The rate of change of number of initiated leaves is calculated according to Equ. (<a href="#eq-dinLMS" class="quarto-xref">Eq.&nbsp;1</a>) from emergence until the last leaf primordium is formed:</p>
+<p>The CW model mainly describes phenological development through the change of GS over time. In CWm we added an explicit simulation of three additional state variables, the leaf number on the main stem (nLMS), the number of initiated leaves on the main stem (inLMS) and the BBCH stage. At emergence nLMS is set to one and inLMS is set to 4 <span class="citation" data-cites="brooking2002a">(<a href="#ref-brooking2002a" role="doc-biblioref">Brooking and Jamieson, 2002</a>)</span>. This is because the embryo at the time of sowing has already three leaf primordia <span class="citation" data-cites="kirby1985">(<a href="#ref-kirby1985" role="doc-biblioref">KIRBY et al., 1985</a>)</span> and that an additional primordium is assumed to be produced until emergence. The rate of change of number of initiated leaves is calculated according to <a href="#eq-dinLMS" class="quarto-xref">Eq.&nbsp;1</a> from emergence until the last leaf primordium is formed:</p>
 <p><span id="eq-dinLMS"><span class="math display">
 \frac{d\,in{{L}_{MS}}}{dt}=\frac{\max
 (0,T-{{T}_{b}})}{Plast}
@@ -371,7 +382,7 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
 </section>
 <section id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2" class="level3" data-number="1.1.3">
 <h3 data-number="1.1.3" class="anchored" data-anchor-id="terminal-spikelet-to-end-of-leaf-growth-and-beginning-of-ear-growth-gs-2"><span class="header-section-number">1.1.3</span> Terminal spikelet to end of leaf growth and beginning of ear growth (GS 2)</h3>
-<p>Within the model the implicit and simplifying assumption is made that GS 2 stage is more or less closely associated with BBCH 30 [<span class="citation" data-cites="baker1983">Baker and Gallagher (<a href="#ref-baker1983" role="doc-biblioref">1983</a>)</span>]<span class="citation" data-cites="baker1983">(<a href="#ref-baker1983" role="doc-biblioref">Baker and Gallagher, 1983</a>)</span>, but that the initiation of the terminal leaf primordium may be reached a bit earlier at a stage we named (<span class="math inline">GS_{flp}</span>).</p>
+<p>Within the model the implicit and simplifying assumption is made that GS 2 stage is more or less closely associated with BBCH 30 <span class="citation" data-cites="baker1983">(<a href="#ref-baker1983" role="doc-biblioref">Baker and Gallagher, 1983</a>)</span>, but that the initiation of the terminal leaf primordium may be reached a bit earlier at a stage we named <span class="math inline">GS_{flp}</span>.</p>
 <p>The GS change rate between GS 2 and 3 is calculated as the ratio of the daily temperature minus the base temperature (T<sub>b</sub>, assumed to be 0°C) to the thermal time interval GS 2 to GS 3. This thermal time interval is calculated by the number of leaves not yet expressed at GS 2 minus two (fL), multiplied by the phyllochron plus the temperature sum between BBCH 37 and 39, i.e.&nbsp;‘PH39’:.</p>
 <p><span id="eq-dGS_dt_GS2"><span class="math display">\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39} \tag{13}</span></span></p>
 <p>thereby the term fL denotes the leaves which have to appear after GS 2 is reached, calculated from the number of initiated leaves at GS 2 minus 2. The substraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia <span class="citation" data-cites="griffiths1985">(<a href="#ref-griffiths1985" role="doc-biblioref">GRIFFITHS et al., 1985</a>)</span>.</p>
@@ -523,7 +534,7 @@ Figure&nbsp;7: Relation between RT and SWDF for different values of pSWDF
 </section>
 <section id="nitrogen-limitations" class="level3" data-number="2.2.3">
 <h3 data-number="2.2.3" class="anchored" data-anchor-id="nitrogen-limitations"><span class="header-section-number">2.2.3</span> Nitrogen limitations</h3>
-<p>Consistent with <span class="citation" data-cites="sinclair1989">(<a href="#ref-sinclair1989" role="doc-biblioref">Sinclair and Horie, 1989</a>)</span> , <span class="citation" data-cites="meinke1997">(<a href="#ref-meinke1997" role="doc-biblioref">Meinke et al., 1997</a>)</span> and <span class="citation" data-cites="meinke1998">(<a href="#ref-meinke1998" role="doc-biblioref">Meinke et al., 1998</a>)</span> HumeWheat uses an SLN threshold value SLN<sub>crit</sub> [g N<sup>.</sup>cm<sup>-2</sup>] below which a LUE reduction factor (f<sub>SLN</sub>) is applied.</p>
+<p>Consistent with <span class="citation" data-cites="sinclair1989">Sinclair and Horie (<a href="#ref-sinclair1989" role="doc-biblioref">1989</a>)</span>, <span class="citation" data-cites="meinke1997">Meinke et al. (<a href="#ref-meinke1997" role="doc-biblioref">1997</a>)</span> and <span class="citation" data-cites="meinke1998">Meinke et al. (<a href="#ref-meinke1998" role="doc-biblioref">1998</a>)</span> HumeWheat uses an SLN threshold value SLN<sub>crit</sub> [g N<sup>.</sup>cm<sup>-2</sup>] below which a LUE reduction factor (f<sub>SLN</sub>) is applied.</p>
 <p>In a first step the optimum SLN value (SLN<sub>crit</sub>) is calculated from the initial SLN value (<span class="math inline">SLN_{crit_{int}}</span>) and the green area index (GAI) according to the following equation:</p>
 <p><span id="eq-SLNcrit"><span class="math display">SLN_{crit} =SLN_{crit_{int}}+SLN_{crit_{inc}} \cdot GAI; \tag{32}</span></span></p>
 <p>The values of the parameters <span class="math inline">SLN_{crit_{int}}</span> and <span class="math inline">SLN_{crit_{inc}}</span> are set to 3.74 and -0.228, respectively <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>. The value of <span class="math inline">SLN_{crit_{int}}</span> is the initial SLN value at GAI = 0. The value of <span class="math inline">SLN_{crit_{inc}}</span> is the increase of the SLN<sub>crit</sub> value per unit of GAI.</p>
@@ -541,7 +552,7 @@ Figure&nbsp;8: Critical SLN value SLNcrit as a function of GAI
 </div>
 </div>
 </div>
-<p>The <a href="#fig-SLN_GAI" class="quarto-xref">Figure&nbsp;9</a> from <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span> gives the original source of this relationship derived from an analysis of experimental data using quartile regression.</p>
+<p>The <a href="#fig-SLN_GAI" class="quarto-xref">Figure&nbsp;9</a> from <span class="citation" data-cites="ratjen2015a">RATJEN and KAGE (<a href="#ref-ratjen2015a" role="doc-biblioref">2015b</a>)</span> gives the original source of this relationship derived from an analysis of experimental data using quartile regression.</p>
 <div id="fig-SLN_GAI" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SLN_GAI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -565,7 +576,7 @@ The name of the variable Carbo<sub>red</sub> is derived from the original CERES-
 <img src="rLUE_SLNI.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rLUE_SLNI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Relationship between relative light use efficiency and the index SLNI (from <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>).
+Figure&nbsp;10: Relationship between relative light use efficiency and the index SLNI (from <span class="citation" data-cites="ratjen2015a">RATJEN and KAGE (<a href="#ref-ratjen2015a" role="doc-biblioref">2015b</a>)</span>).
 </figcaption>
 </figure>
 </div>
@@ -624,10 +635,35 @@ Figure&nbsp;12: CO2 effect factor fCO2 as a function of CO2 concentration and SW
 <h1 data-number="3"><span class="header-section-number">3</span> Dry Matter Partitioning</h1>
 <p>The daily dry matter accumulation rate of the canopy is partitioned into the different plant organs. The partitioning of the daily dry matter accumulation rate into the different plant organs is in contrast to many other crop growth models based on the concept of allometric relationships between the organs of the crop. The other governing principle is the concept N dilution, i.e.&nbsp;decreasing N concentrations of the organs.</p>
 <p>Effects of nitrogen shortage and drought stress on the partitioning of dry matter are considered in the model, but can be switched off by setting the respectives model options.</p>
-<section id="allometric-leaf-stem-partitioning" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="allometric-leaf-stem-partitioning"><span class="header-section-number">3.1</span> Allometric Leaf Stem Partitioning</h2>
-<section id="drought-effects" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="drought-effects"><span class="header-section-number">3.1.1</span> Drought effects</h3>
+<section id="initialisation" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="initialisation"><span class="header-section-number">3.1</span> Initialisation</h2>
+<p>The initial leaf weight per plant after emergence is calculated from the initial leaf area and the specific leaf area (SLA) according to the following equation:</p>
+<p><span id="eq-LFWTplini"><span class="math display">LFWT_{pl} = LA_{ini} / SLA_{pot} \tag{40}</span></span></p>
+<p>The stem weight per plant then is calculated from an allometric relationship between leaf and stem weight according to the following equation:</p>
+<p><span id="eq-STMWTplini"><span class="math display">STMWT_{pl} = exp(g * ln(LFWT_{pl} * plants) + h) / plants \tag{41}</span></span></p>
+<p>where <span class="math inline">g</span> and <span class="math inline">h</span> are parameters of the allometric relationship. The default values of <span class="math inline">g</span> and <span class="math inline">h</span> are set to 1.46 and -2.13 in the model.</p>
+<p>The seed reserves from the parameter SEEDRV<sub>ini</sub>:</p>
+<p><span id="eq-SEEDRVini"><span class="math display">SEEDRV = SEEDRV_{ini} \tag{42}</span></span></p>
+<p>The nitrogen amount in the leaf fraction is calculated from the leaf nitrogen concentration under optimum N supply and the initial leaf weight per plant according to the following equation:</p>
+<p><span id="eq-NLeafplini"><span class="math display">NLeaf_{pl} = LFWT_{pl} * Nc_{opt_{Leaf}} / 100 \tag{43}</span></span></p>
+<p>Accordingly, the nitrogen amount in the stem fraction is calculated from the stem nitrogen concentration under optimum N supply and the initial stem weight per plant according to the following equation:</p>
+<p><span id="eq-NStemplini"><span class="math display">NStem_{pl} = STMWT_{pl} * NoptStem / 100 \tag{44}</span></span></p>
+<p>The initial amount of N in the shoot of a single wheat plant is calculated as the sum of the N in the leaf and stem fraction:</p>
+<p><span id="eq-NShootplini"><span class="math display">NShoot_{pl} = NStoragepool_{pl} + NLeaf_{pl} + NStem_{pl} + NGrain_{pl} \tag{45}</span></span></p>
+<p>The N amount in the root fraction is calculated from the initial shoot N amount and a fraction of the initial shoot N amount according to the following equation : <span id="eq-NRootplini"><span class="math display">NRoot_{pl} = NShoot_{pl} * fRootN_{ini} \tag{46}</span></span></p>
+</section>
+<section id="seedrv-change" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="seedrv-change"><span class="header-section-number">3.2</span> SeedRV change</h2>
+<p>The seed reserves contribute to the daily dry matter accumulation rate of the canopy. Their rate of change is calculated as follows:</p>
+<p><span id="eq-SEEDRVdt"><span class="math display">\frac{SEEDRV}{dt} = -k_{SEEDRV} * SEEDRV \tag{47}</span></span></p>
+<p>where <span class="math inline">k_{SEEDRV}</span> is the rate of change of seed reserves. The value of <span class="math inline">k_{SEEDRV}</span> is set to 0.15 in the model, i.e.&nbsp;the daily change rate is 15% of the actual amount.</p>
+<p>The rate of change of seed reserves is added to the assimilate flow calles ‘Assiflow’ in the model:</p>
+<p>$$Assiflow = Assiflow - SEEDRV.c;</p>
+</section>
+<section id="allometric-leaf-stem-partitioning" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="allometric-leaf-stem-partitioning"><span class="header-section-number">3.3</span> Allometric Leaf Stem Partitioning</h2>
+<section id="drought-effects" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="drought-effects"><span class="header-section-number">3.3.1</span> Drought effects</h3>
 <p>The partitioning of dry matter between leaf and stem is influenced by the soil water potential. Under water stress conditions the partitioning of dry matter to the stem is increased (<a href="#fig-AlloDrought" class="quarto-xref">Figure&nbsp;13</a>).</p>
 <div id="fig-AlloDrought" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -641,15 +677,15 @@ Figure&nbsp;13: Relationship between the log-transformed leaf [ln(DML)] and stem
 </div>
 <p>Within the dry matter module the variable kf<sub>d</sub> describes the influence of <em>psi<sub>root</sub></em>, i.e.&nbsp;the absolute, non negative weighted average of the soil hydraulic potential on leaf stem partitioning.</p>
 <p>The value of k_f is calculated as follows:</p>
-<p><span id="eq-kf_d"><span class="math display">kf_d = max(1,\ 1 + (| psi_{root} | - psi_{crit}) \cdot psi_s) \tag{40}</span></span></p>
-<p>where psi<sub>root</sub> is the soil hydraulic potential, psi<sub>crit</sub> is the critical soil water potential at which the leaf stem partitioning is 1 and psi<sub>s</sub> is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi<sub>s</sub> is set to 0.296 in the model. The value of psi<sub>crit</sub> is set to a default of 2.24 MPa in the model. These parameters are from <span class="citation" data-cites="ratjen2016">(<a href="#ref-ratjen2016" role="doc-biblioref">Ratjen et al., 2016</a>)</span>.</p>
+<p><span id="eq-kf_d"><span class="math display">kf_d = max(1,\ 1 + (| psi_{root} | - psi_{crit}) \cdot psi_s) \tag{48}</span></span></p>
+<p>where psi<sub>root</sub> is the soil hydraulic potential, psi<sub>crit</sub> is the critical soil water potential at which the leaf stem partitioning is 1 and psi<sub>s</sub> is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi<sub>s</sub> is set to 0.296 in the model. The value of psi<sub>crit</sub> is set to a default of 2.24 MPa in the model. These parameters are from <span class="citation" data-cites="ratjen2016">Ratjen et al. (<a href="#ref-ratjen2016" role="doc-biblioref">2016</a>)</span>.</p>
 <p>The value of psi<sub>crit</sub> is the critical soil water potential at which the leaf stem partitioning is 1. The value of psi<sub>s</sub> is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi<sub>s</sub> is set to 0.296 in the model. The value of psi<sub>crit</sub> is set to a default of 2.24 MPa in the model.</p>
-<p><span id="eq-kf_n"><span class="math display">kf_n = max(1,\ 1 + (NNI_{crit} - NNI) \cdot NNI_{inc}) \tag{41}</span></span></p>
+<p><span id="eq-kf_n"><span class="math display">kf_n = max(1,\ 1 + (NNI_{crit} - NNI) \cdot NNI_{inc}) \tag{49}</span></span></p>
 <p>where NNI<sub>crit</sub> is the critical nitrogen nutrition index at which the leaf stem partitioning is 1, NNI<sub>inc</sub> is the increase of the leaf stem partitioning per unit of NNI and NNI is the actual nitrogen nutrition index. The default value of NNI<sub>inc</sub> is set to 0.595 in the model. The value of NNI<sub>crit</sub> is set to a default of 1.377 in the model.</p>
 <p>The stem fraction of shoot dry matter increase is calculated from an allometric relation ship:</p>
-<p><span id="eq-fStem"><span class="math display">f_{stem*} = (1 - \frac{1}{ (1 + e^h \cdot LFWT^{g-1} \cdot g))} \tag{42}</span></span></p>
+<p><span id="eq-fStem"><span class="math display">f_{stem*} = 1 - \frac{1}{ 1 + e^h \cdot LFWT^{g-1} \cdot g} \tag{50}</span></span></p>
 <p>where LFWT is the leaf DM per square meter and h and g are parameters of the allometric relationship. The default values of g and h are set to 1.46 and -2.13 in the model.</p>
-<p><span id="eq-fStem"><span class="math display">f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n)) \tag{43}</span></span></p>
+<p><span class="math display">f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n))</span></p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-fStem" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
@@ -664,6 +700,53 @@ Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="leaf-nitrogen-concentration" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="leaf-nitrogen-concentration"><span class="header-section-number">3.4</span> Leaf nitrogen concentration</h2>
+<p>After the BBCH stage of the crop reaches the value <span class="math inline">EC_{crit_{NcLeaf}}</span>, which is set to 27, i.e.&nbsp;before shooting, the leaf nitrogen concentration [% N of DM] is calculated as follows:<br>
+<span id="eq-NcOptLeaf"><span class="math display">Nc_{opt_{leaf}} = Nc_{leaf_{Vf1}} \cdot LFWT + Nc_{leaf_{Vf2}} \tag{51}</span></span> thereby <span class="math inline">Nc_{leaf_{Vf1}}</span> and <span class="math inline">Nc_{leaf_{Vf2}}</span> are parameters of the linear relationship between leaf nitrogen concentration and leaf dry matter. The default values of <span class="math inline">Nc_{leaf_{Vf1}}</span> and <span class="math inline">Nc_{leaf_{Vf2}}</span> are set to -0.0061 and 5.9543 in the model.</p>
+<p>In a transitional phase between autumn and spring, the leaf nitrogen concentration is calculated as follows:</p>
+<p><span id="eq-NcLeafWinter"><span class="math display">\begin{align*}
+\frac{ Nc_{Leaf_{Winter}}}{dt} &amp; = (Nc_{leaf_{winter}} - Nc_{leaf_{min}}) \cdot rgr_{NcLeafWinter} \cdot \\
+  &amp;  GlobRad \cdot \frac{ 1 - (Nc_{leaf_{winter}}- Nc_{leaf_{min}})}  {Nc_{Leaf_{Vf1}} \cdot LFWT + Nc_{Leaf_{Vf2}} - Nc_{leaf_{min}}}
+\end{align*} \tag{52}</span></span></p>
+<p>where <span class="math inline">Nc_{leaf_{min}}</span> is the minimum leaf nitrogen concentration, <span class="math inline">rgr_{NcLeafWinter}</span> is the relative growth rate of the leaf nitrogen concentration, and <span class="math inline">GlobRad</span> is the global radiation. The default values of <span class="math inline">Nc_{leaf_{min}}</span> and <span class="math inline">rgr_{NcLeafWinter}</span> are set to 1.5 and 0.0001 in the model. The value of <span class="math inline">Nc_{leaf_{min}}</span> is the minimum leaf nitrogen concentration. The value of <span class="math inline">rgr_{NcLeafWinter}</span> is the relative growth rate of the leaf nitrogen concentration. The value of <span class="math inline">GlobRad</span> is the global radiation. The value of <span class="math inline">Nc_{leaf_{min}}</span> is the minimum leaf nitrogen concentration. The value of <span class="math inline">rgr_{NcLeafWinter}</span> is the relative growth rate of the leaf nitrogen concentration. The value of <span class="math inline">GlobRad</span> is the global radiation.</p>
+<p>if DayOfYear.v &lt; 150 then if TEMPM.v &gt; 0 then // transitional phase between autumn and spring Nc_optLeaf.v := NcLeafWinter.v;</p>
+<section id="calc_leaf_n_change" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="calc_leaf_n_change"><span class="header-section-number">3.4.1</span> Calc_Leaf_N_Change</h3>
+<p>Above the critical BBCH stage (<span class="math inline">EC_{crit_{NcLeaf}}</span>, set to BBCH 27, i.e.&nbsp;end of tillering) the daily change of the leaf nitrogen amount per plant is calculated from a linear dilution curve:</p>
+<p><span class="math display">Nc_{opt_{Leaf}} = Nc_{Leaf_{Vf1}} \cdot LFWT_{m2} + Nc_{Leaf_{Vf2}}</span></p>
+<p>The daily change of the leaf nitrogen amount per plant is calcuated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant:</p>
+<p><span id="eq-NLeafpl"><span class="math display">\frac {N_{Leaf_{pl}}}{dt} = \frac {LFWT_{pl}}{dt} \cdot Nc_{opt_{Leaf}} / 100 + Nc_{opt_{Leaf}} / 100 \cdot LFWT_{pl} - N_{Leaf_{pl}} \tag{53}</span></span></p>
+</section>
+</section>
+<section id="grain-filling" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="grain-filling"><span class="header-section-number">3.5</span> Grain filling</h2>
+<section id="initialisation-1" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="initialisation-1"><span class="header-section-number">3.5.1</span> Initialisation</h3>
+<p>The initial change of the grain weight is calculated using a sliding N and C accumulation of initial grain N &amp; C from EC 40 to 65 from the parameter <span class="math inline">GRNWT_{ini}</span> and the missing fraction of that weight. Initial grain weight per plant and the grain filling rate according to the following equation:</p>
+<p><span id="eq-GRNWTplini"><span class="math display">\frac{GRNWT_{pl}}{dt} = GRNWT_{ini} / 1000 \cdot GPPVAR \cdot min\left( 1, \frac{(EC - 40)}{ (65 - 40)}\right) - GRNWT_{pl} \tag{54}</span></span></p>
+<p>where <span class="math inline">GRNWT_{ini}</span> is the initial grain weight per plant, <span class="math inline">GPPVAR</span> is the grain filling rate, <span class="math inline">EC</span> is the effective cumulated temperature above 0°C since anthesis. The value of <span class="math inline">GRNWT_{ini}</span> is set to 0.1 in the model. The value of <span class="math inline">GPPVAR</span> is set to 0.0001 in the model.<br>
+Because the initial weight comes from the stem fraction, the rate of change of DM stem has to be adjusted:</p>
+<p><span id="eq-STMWTpl_corr"><span class="math display">\frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - \frac{GRNWT_{pl}}{dt} \tag{55}</span></span></p>
+</section>
+<section id="grain-filling-1" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="grain-filling-1"><span class="header-section-number">3.5.2</span> Grain filling</h3>
+<p>At first the parameter P5 of the CERES model is descaled to the temperature sum for grain filling (X<sub>m</sub>) according to:</p>
+<p><span id="eq-Xm"><span class="math display">X_m = \frac{(P5 + 21.5) } {0.05} \tag{56}</span></span></p>
+<p>The mid of the grain filling phase is calculated from the inflexion point of the logistic function of the grain filling phase <em>dECDP</em> which is set to 250 [°Cd].</p>
+<p><span id="eq-Xmid"><span class="math display">X_{mid} = dECDP \tag{57}</span></span></p>
+<p>The initial ratio of the harvest index to the potential harvest index HI/potHI.</p>
+<p><span id="eq-INIGF"><span class="math display">INI_{GF} = ((GPP \cdot \frac{ (GRNWT_{ini} / 1000))} { TOPWT_{pl})} \cdot \frac{1}{HI_{pot}} \tag{58}</span></span></p>
+<p>The relative growth rate of the grain filling phase is calculated from the logistic function of the grain filling phase according to the following equation:</p>
+<p><span id="eq-rGF"><span class="math display">r_{GF} = \frac{ln( 1 / GF_{ini} - 1)} {Xmid} \tag{59}</span></span></p>
+<p><span id="eq-KGF"><span class="math display">K_{GF} = ((exp(r_{GF} * X_m) - 1) * GF_{ini}) / (exp(r_{GF} * X_m) * GF_{ini} - 1) \tag{60}</span></span></p>
+<p><span id="eq-R0GF"><span class="math display">R0_GF = (K_{GF} - GF_{ini} / GF_{ini} \tag{61}</span></span></p>
+<p><span id="eq-HIpotHI"><span class="math display">HI_potHI = K_{GF} / (1 + R0_{GF} * exp(-r_{GF} \cdot SUMDTTGF)) \tag{62}</span></span></p>
+<p><span id="eq-GROGRNpot"><span class="math display">GROGRN_{pot} = (TOPWT_{pl} + Senwt_{pl}) \cdot  HI_{pot} * HI_potHI - GRNWT_{pl} \tag{63}</span></span></p>
+<p>The growth rate of grain per plant is calculated from the potential, sink limited growth rate of the grains and the difference between the acutal stem weight and the minimum stem weight: <span class="math display">GROGRN = max(0, min(GROGRN_{pot}, STMWT_{pl} - Swmin))</span></p>
+<p><span class="math display"> \frac{STMWT_{pl}}{dt} := \frac{STMWT_{pl}}{dt} - GROGRN</span> The grain weight per plant is calculated from the grain weight per plant and the growth rate of the grain weight per plant according to the following equation: <span id="eq-GRNWTpl"><span class="math display">\frac{GRNWT_{pl}}{dt} = GROGRN \tag{64}</span></span></p>
 </section>
 </section>
 </section>
@@ -685,11 +768,11 @@ Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf
 </section>
 <section id="miscellaneous" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Miscellaneous</h1>
-<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;44</a>).</p>
+<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;65</a>).</p>
 <p><span id="eq-effective-temperature"><span class="math display">T_{eff}  = \begin{cases}
 T_{air} - T_{base} &amp; \text{if}~T&gt;0\\
 0 &amp; \text{if}~T&lt;2
-\end{cases} \tag{44}</span></span></p>
+\end{cases} \tag{65}</span></span></p>
 </section>
 <section id="parameters" class="level1" data-number="9">
 <h1 data-number="9"><span class="header-section-number">9</span> Parameters</h1>
