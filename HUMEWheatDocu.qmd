@@ -17,6 +17,9 @@ format:
  html:
   mermaid:
     theme: neutral
+    mainfont: Helvetica Neue, Helvetica, Arial, sans
+    monofont: Cascadia Mono, Menlo, Consolas, Courier New, Courier
+    mathfont: "TeX Gyre Termes Math"
 ---
 
 ```{css}
@@ -26,7 +29,9 @@ p {
 }
 ```
 
-```{r setup, include=FALSE}
+```{r}
+#| label: SetupLibraries
+#| include: FALSE
 
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 rm(list = ls(all.names = TRUE))
@@ -54,14 +59,14 @@ options("citation_format" = "pandoc")
 
 ```
 
-This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [@ratjen2016][@ratjen2015][@ratjen2016][@ratjen2015b], Ulf Böttcher, Adam Luig, Dorothee Neukam [@neukam2016] [@neukam2015] and others. It is in many aspects based on the CERES-Wheat model (CW) [@ritchie2015], but uses different appproaches especially for dry matter and nitrogen partitioning, leaf area expansion and dry matter production. Also the development part is extended in comparison to the original CERES wheat approach as it prdicts BBCH stages on the basis of an explicit simulation of leaf initiation and appearance. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
+This document is as a short documentation of the wheat crop-soil-model (CSM) ‘HumeWheat’ used in the current work of the agronomy group of CAU Kiel. The wheat specific part was developed within several projects with main contributions by Arne Ratjen [@ratjen2016; @ratjen2015; @ratjen2016; @ratjen2015b], Ulf Böttcher, Adam Luig, Dorothee Neukam [@neukam2016] [@neukam2015] and others. It is in many aspects based on the CERES-Wheat model (CW) [@ritchie2015], but uses different approaches especially for dry matter and nitrogen partitioning, leaf area expansion and dry matter production. Also the development part is extended in comparison to the original CERES wheat approach as it predicts BBCH stages on the basis of an explicit simulation of leaf initiation and appearance. ‘HumeWheat’ is a mechanistic CSM and runs on a daily time step. The model is of a modular design principle and was developed using an object oriented class component library (Kage and Stützel 1999a) implemented in the Borland Delphi Builder® V5 development environment. The model runs on daily time steps, but internal integration of the soil water balance module is on smaller time steps, the size dependent on the maximum changes of the soil water in the layers of the 1-D soil water balance model. Required external data inputs are the mean daily temperature \[°C\], precipitation \[mm d^-1^\], global radiation \[W m^-2^\], wind speed \[m s^-1^\], relative humidity \[%\] and values derived from these like vapor pressure \[mbar\] and saturation deficit \[mbar\].
 
 # Development
 
-The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage ([@lancashire1991a]). Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
+The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage [@lancashire1991a]. Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
 
 | GS  | BBCH | Phase                                                                            |
-|-------------------|-------------------|----------------------------------|
+|------------------|------------------|------------------------------------|
 | 7   | 00   | Fallow                                                                           |
 | 8   | 00   | Sowing to germination                                                            |
 | 9   | 05   | Germination to emergence                                                         |
@@ -81,7 +86,7 @@ $$
 (0,T-{{T}_{b}})}{Plast}
 $$ {#eq-dinLMS}
 
-Where Plast is the plastochron (°Cd) T is the air temperature and T~b~ is the base temperature. The formation of leaf primordia which produce leaves is finished some time before the double ridge stage (Bonnet, 1935; Bonnet, 1936; Muschik, 1957). The time of the cessation of leaf primordia initiation, however, is not exactly coupled to a certain GS in the CW model and is also not linked to a certain BBCH stage. From available data of BBCH 37, i.e. the time when the last leaf appears, it was possible to estimate an approximate GS corresponding to the formation of the final leaf primordium ($GS_{flp}$) ‘ex post’. The number of visible leaves on the main stem nLMS is calculated accordingly (@eq-dnLMS):
+Where Plast is the plastochron (°Cd) T is the air temperature and T~b~ is the base temperature. The formation of leaf primordia which produce leaves is finished some time before the double ridge stage (Bonnet, 1935; Bonnet, 1936; Muschik, 1957). The time of the cessation of leaf primordia initiation, however, is not exactly coupled to a certain GS in the CW model and is also not linked to a certain BBCH stage. From available data of BBCH 37, i.e. the time when the last leaf appears, it was possible to estimate an approximate GS corresponding to the formation of the final leaf primordium ($GS_{flp}$) *ex post*. The number of visible leaves on the main stem nLMS is calculated accordingly (@eq-dnLMS):
 
 $$\frac{d\,n{{L}_{MS}}}{dt}=\frac{\max (0,T-{{T}_{b}})}{Phyll}$$ {#eq-dnLMS}
 
@@ -234,11 +239,11 @@ $$\frac{dGS}{dt}=\frac{\max (0,T-{{T}_{b}})}{fL\cdot Phyll+Ph39}$$ {#eq-dGS_dt_G
 
 thereby the term fL denotes the leaves which have to appear after GS 2 is reached, calculated from the number of initiated leaves at GS 2 minus 2. The substraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia [@griffiths1985].
 
-In the CWm model we therefore calculated a rate of node emission and introduced a parameter we called ‘TSumInternode’ analogous to the phyllochron. The numerical value of this parameter is the inverse of the slope of the relation of node numbers to the temperature sum from BBCH 30. The rate of change of BBCH stages is calculated until BBCH 37 (final leaf begins to emerge) from the ratio of the effective day temperature and TSumInternode (\@eq-dBBCH_dt_GS1).
+In the CWm model we therefore calculated a rate of node emission and introduced a parameter we called ‘TSumInternode’ analogous to the phyllochron. The numerical value of this parameter is the inverse of the slope of the relation of node numbers to the temperature sum from BBCH 30. The rate of change of BBCH stages is calculated until BBCH 37 (final leaf begins to emerge) from the ratio of the effective day temperature and TSumInternode (@eq-dBBCH_dt_GS1).
 
 The BBCH stage 37 is reached when the number of the emerged leaves is equal to the number of leaf primordia minus two. The subtraction of two leaf primordia was made in accordance to the assumption that at least the last two vegetative primordia may not produce visible leaves, they are therefore sometimes called labile primordia [@griffiths1985].
 
-The length of the thermal time from sowing to the initiation of the last leaf primordium together with the plastochron now determines the number of initiated leaves. This number is variable and the new algorithm of CWm therefore also predicts a variable length of GS 2 in terms of temperature sum. In CWm the rate of development between BBCH 37 and BBCH 39, however, is again described by a certain temperature sum expressed as the newly added parameter ‘PH39’ (\@eq-dBBCH_dt_GS2b). It was introduced because according to our data analysis the thermal time between BBCH 37 and 39 ratings was significantly longer than one phyllochron.
+The length of the thermal time from sowing to the initiation of the last leaf primordium together with the plastochron now determines the number of initiated leaves. This number is variable and the new algorithm of CWm therefore also predicts a variable length of GS 2 in terms of temperature sum. In CWm the rate of development between BBCH 37 and BBCH 39, however, is again described by a certain temperature sum expressed as the newly added parameter ‘PH39’ (@eq-dBBCH_dt_GS2b). It was introduced because according to our data analysis the thermal time between BBCH 37 and 39 ratings was significantly longer than one phyllochron.
 
 $$\frac{dBBCH}{dt}=\frac{\max (0,T-{{T}_{b}})}{\text{TSumInternode}}$$ {#eq-dBBCH_dt_GS2a}
 
@@ -270,7 +275,7 @@ $$\frac{dBBCH}{dt}=(5.7+1.4(GS-4))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS4}
 
 ### Grain filling (GS5)
 
-The period of grain filling is for the GS development rate defined by a genotype specific temperature sum and the effective temperature during grain filling. The latter is calculated as the mean temperature minus the base temperature. The effective temperature is divided by the temperature sum for grain filling (TSumGF) to get the rate of change of GS 5. :
+The period of grain filling is for the GS development rate defined by a genotype specific temperature sum and the effective temperature during grain filling. The latter is calculated as the mean temperature minus the base temperature. The effective temperature is divided by the temperature sum for grain filling (TSumGF) to get the rate of change of GS 5:
 
 $$\frac{dGS}{dt}=\frac{\max (0,(T-{{T}_{b}})-1)}{TSumGF}$$ {#eq-dGS_dt_GS5}
 
@@ -292,7 +297,7 @@ $$\frac{dBBCH}{dt}=(9+(GS-6))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS6}
 
 # Dry matter production
 
-The daily dry matter accumulation ( $\frac{d{W_{tot}}}{dt}$) of the canopy is calculated according to the LUE approach, using the simple ‘big-leaf’ canopy model. Within the source code the term *carbo* is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
+The daily dry matter accumulation ($\frac{d{W_{tot}}}{dt}$) of the canopy is calculated according to the LUE approach, using the simple *big-leaf* canopy model. Within the source code the term *carbo* is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
 
 ```{mermaid}
 %%| fig-cap: Calculation of daily dry matter production in HUMEWheat. 
@@ -510,7 +515,7 @@ $$Carbo_{red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \c
 The values of the parameters SLNI~a~, SLNI~b~ and SLNI~c~ are set to -0.197, 2.8 and -1.6, respectively [@ratjen2015a]. The value of SLNI~a~ is the intercept of the Carbo~red~ function. The value of SLNI~b~ is the slope of the Carbo~red~ function. The value of SLNI~c~ is the curvature of the Carbo~red~ function. The Carbo~red~ function is shown in @fig-CarboRed.\
 The name of the variable Carbo~red~ is derived from the original CERES-Wheat source code where it is primarily used to calculate the reduction of the photosynthesis during ripening/senescence. We use it here to calculate the general reduction of the LUE due to nitrogen limitation.
 
-![Relationship between relative light use efficiency and the index SLNI (from @ratjen2015a).](rLUE_SLNI.png){#fig-rLUE_SLNI}
+![Relationship between relative light use efficiency and the index SLNI from @ratjen2015a.](rLUE_SLNI.png){#fig-rLUE_SLNI}
 
 ```{r}
 #| label: fig-CarboRed
@@ -611,9 +616,7 @@ From the daily dry matter accumulation rate and the amount of intercepted radiat
 
 $$LUE_{eff} =   \frac {PCARB}{IPAR}$$ {#eq-LUEeff}
 
-where $IPAR$ is the intercepted PAR. T
-
-The effective radiation use efficiency thereby sums up the different limitations of the LUE into a single value.
+where $IPAR$ is the intercepted PAR. The effective radiation use efficiency thereby sums up the different limitations of the LUE into a single value.
 
 # Dry Matter Partitioning
 
@@ -631,7 +634,7 @@ The stem weight per plant then is calculated from an allometric relationship bet
 
 $$STMWT_{pl} = exp(g * ln(LFWT_{pl} * plants) + h) / plants$$ {#eq-STMWTplini}
 
-where $g$ and $h$ are parameters of the allometric relationship. The default values of $g$ and $h$ are set to 1.46 and -2.13 in the model.
+where $g$ and $h$ are parameters of the allometric relationship. The default values of *g* and *h* are set to 1.46 and -2.13 in the model.
 
 The seed reserves from the parameter SEEDRV~ini~:
 
@@ -680,6 +683,10 @@ $$kf_d = max(1,\ 1 + (| psi_{root} | - psi_{crit}) \cdot psi_s)$$ {#eq-kf_d}
 where psi~root~ is the soil hydraulic potential, psi~crit~ is the critical soil water potential at which the leaf stem partitioning is 1 and psi~s~ is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi~s~ is set to 0.296 in the model. The value of psi~crit~ is set to a default of 2.24 MPa in the model. These parameters are from @ratjen2016.
 
 The value of psi~crit~ is the critical soil water potential at which the leaf stem partitioning is 1. The value of psi~s~ is the slope of the relationship between leaf stem partitioning and soil water potential. The default value of psi~s~ is set to 0.296 in the model. The value of psi~crit~ is set to a default of 2.24 MPa in the model.
+
+### Nitrogen effects
+
+Under nitrogen deficiency a higher fraction of dry matter is partitioned to the stem. The partitioning of dry matter between leaf and stem is calculated from the nitrogen nutrition index (@eq-kf_n).
 
 $$kf_n = max(1,\ 1 + (NNI_{crit} - NNI) \cdot NNI_{inc})$$ {#eq-kf_n}
 
@@ -775,6 +782,36 @@ p
 
 ```
 
+## Fine root growth
+
+The fraction of assimilates allocated to fine roots is calculated from a linear decrease of fine root mass with increasing temperature sum.
+
+$$f_{fineroot} = max \left( 0, \left(f_{FineRoot0} - f_{FineRootDec} \cdot Tempsum \right) \right)$$ {#eq-PTF}
+
+where $f_{FineRoot0}$ is the initial fraction of assimilates allocated to fine roots, $f_{FineRootDec}$ is the decrease of the fraction of assimilates allocated to fine roots per unit of temperature sum and $Tempsum$ is the temperature sum since sowing. The default values of $f_{FineRoot0}$ and $f_{FineRootDec}$ are set to 0.653 and 0.000501 in the model.
+
+Historically the fraction of assimilated allocated to the shoot is called PTF in Ceres Wheat.
+
+$$PTF = min \left( 1, 1 - f_{fineroot} \right)$$
+
+Effects of drought stress and nitrogen shortage on the partitioning of dry matter between shoot and root are considered in the model, but can be switched off by setting the respectives model options. These effects are implemented by altering the value of PTF and f~fineroot~ is re-calculated from PTF.
+
+Under drought stress the initial value of PTF is decreased by 0.1 times the difference between 1 and the ratio of actual to potential tranpiration (TransIntRatio) according to the following equation:
+
+$$PTF = PTF - 0.1 \cdot (1 - TransIntRatio)$$ {#eq-PTF_drought}
+
+This is a preliminary parameterization of the effect of drought stress on the partitioning of dry matter between shoot and root. The value of 0.1 is a first guess and should be further calibrated.
+
+Under nitrogen shortage the initial value of PTF is decreased by 0.1 times the difference between 1 and the nitrogen nutrition index (NNI) according to the following equation:
+
+$$PTF = PTF - 0.1 \cdot (1 - NNI)$$ {#eq-PTF_NNI}
+
+This is a preliminary parameterization of the effect of nitrogen shortage on the partitioning of dry matter between shoot and root. The value of 0.1 is a first guess and should be further calibrated.
+
+The fraction of assimilates allocated to fine roots is limited to a value between 0 and 1 and is used to calculate the daily change of the fine root mass per plant:
+
+$$f_{fineroot} = max(0, 1 - PTF)$$ {#eq-FFineroot}
+
 ## Leaf nitrogen concentration
 
 After the BBCH stage of the crop reaches the value $EC_{crit_{NcLeaf}}$, which is set to 27, i.e. before shooting, the leaf nitrogen concentration \[% N of DM\] is calculated as follows:\
@@ -793,67 +830,235 @@ if DayOfYear.v \< 150 then if TEMPM.v \> 0 then // transitional phase between au
 
 ### Calc_Leaf_N_Change
 
-Above the critical BBCH stage ($EC_{crit_{NcLeaf}}$, set to BBCH 27, i.e. end of tillering) the daily change of the leaf nitrogen amount per plant is calculated from a linear dilution curve:
+Above the critical BBCH stage ($EC_{crit_{NcLeaf}}$, set to EC 27, i.e. end of tillering) the optimum leaf nitrogen concentration is calculated from a linear dilution curve:
 
 $$Nc_{opt_{Leaf}} = Nc_{Leaf_{Vf1}} \cdot LFWT_{m2} + Nc_{Leaf_{Vf2}}$$
 
-The daily change of the leaf nitrogen amount per plant is calcuated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant: 
+The daily change of the leaf nitrogen amount per plant is calculated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant:
 
 $$\frac {N_{Leaf_{pl}}}{dt} = \frac {LFWT_{pl}}{dt} \cdot Nc_{opt_{Leaf}} / 100 + Nc_{opt_{Leaf}} / 100 \cdot LFWT_{pl} - N_{Leaf_{pl}}$$ {#eq-NLeafpl}
+
+### Stem N
+
+
+$$NearOptNCStem = 0.98 \cdot (1 / (NcStem_a + NcStem_b \cdot STMWT_{m2}))$$
+
+```{r}
+#| label: fig-NcStem
+#| ref-label: NcStemplot
+#| fig-cap: Stem nitrogen concentration as a function of stem dry matter
+
+NcStem <- function(STMWT, NcStem_a, NcStem_b){
+  NcStem <- 0.98 * (1 / (NcStem_a + NcStem_b * STMWT))
+  return(NcStem)
+}
+
+STMWT <- seq(0, 400, 1)
+NcStem_a <- 0.1475
+NcStem_b <- 0.0011
+
+
+df_NcStem <- data.frame(STMWT = STMWT)
+df_NcStem$NcStem <- NcStem(df_NcStem$STMWT, NcStem_a, NcStem_b)
+df_NcStem$NcStemNearOpt <- 0.98*df_NcStem$NcStem
+
+ggplot(data = df_NcStem) +
+  geom_line(aes(x = STMWT, y = NcStem, color=NcStem),size=2) +
+  geom_line(aes(x = STMWT, y = NcStemNearOpt), size=1, linetype=2) +
+  labs(x = "Stem dry matter [g m^-2]", y = "NcStem [%]") +
+  theme_bw(base_size = 20) +
+  scale_color_gradient(low = "yellow", high = "darkgreen") +
+  scale_y_continuous(limits = c(0, 5)) 
+
+
+```
+
+
 
 
 ## Grain filling
 
+### Grain number
+
+The model for grain number follows the assumption that the grain number per square meter (GPSM) is a function of the shoot dry matter at mid flowering i.e. EC65 (DM\~65), the nitrogen nutrition index at EC 60 (NNI\~60), and the average photothermal quotient from 45 d preceding anthesis (Q45):
+
+$$GPSM= G4\cdot ln \left( DM_{65} \cdot min \left( NNI_{60}\right) \cdot Q45 \right)^{a}$$ {#eq-GPSM}
+
+where GM4 is a parameter of the regression equation. The default values of G4 and a are set to149.153 and 2.6233 in the model (see @fig-GPSM). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_a. See [@ratjen2012] for the derivation of this approach .
+
+![Relationship between the log transformed product of different plant parameters (NNI60 = N nutrition status of wheat crops at anthesis, Q45= the photo thermal quotient 45 d preceding anthesis, DM65 = total shoot dry matter per square meter at anthesis) and grain number per square meter (GPSM) of wheat crops from field experiments with different N fertilizations from [@ratjen2012].](GPSM_regression.png){#fig-GPSM}
+
+For the estimation of grains per plant in order to calculate the initial value of grain N an early estimate of GPSM is derived from the shoot dry matter at anthesis (TOPWT_m2) and the photothermal quotient 45 d preceding anthesis (Q45):
+
+if (EC.v >= 40) and (NNI60.v <= 0) and 
+  if $ln(TOPWT_{m2} \cdot Q45) > 0$ then 
+
+$$GPPVAR = \left ( GM4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{GM4_2} \right) / plants$$ {#eq-GPPVAR}
+
+where GM4~2 is a parameter of the regression equation. The default value of GM4~2 is set to 0.0001 in the model.
+
 ### Initialisation
 
-The initial change of the grain weight is calculated using a sliding N and C accumulation of initial grain N & C from EC 40 to 65 from the parameter $GRNWT_{ini}$ and the missing fraction of that weight. 
-Initial grain weight per plant and the grain filling rate according to the following equation:
+The initial change of the grain weight is calculated using a sliding N and C accumulation of initial grain N & C from EC 40 to 65 from the parameter $GRNWT_{ini}$ and the missing fraction of that weight. Initial grain weight per plant and the grain filling rate according to the following equation:
 
 $$\frac{GRNWT_{pl}}{dt} = GRNWT_{ini} / 1000 \cdot GPPVAR \cdot min\left( 1, \frac{(EC - 40)}{ (65 - 40)}\right) - GRNWT_{pl}$$ {#eq-GRNWTplini}
 
-where $GRNWT_{ini}$ is the initial grain weight per plant, $GPPVAR$ is the grain filling rate, $EC$ is the effective cumulated temperature above 0°C since anthesis. The value of $GRNWT_{ini}$ is set to 0.1 in the model. The value of $GPPVAR$ is set to 0.0001 in the model.\
+where $GRNWT_{ini}$ is the initial grain weight per plant, $GPPVAR$ is the grain filling rate, $EC$ is the EC stage. The value of $GRNWT_{ini}$ is set to 0.1 in the model. The value of $GPPVAR$ is set to 0.0001 in the model.\
 Because the initial weight comes from the stem fraction, the rate of change of DM stem has to be adjusted:
 
 $$\frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - \frac{GRNWT_{pl}}{dt}$$ {#eq-STMWTpl_corr}
 
 ### Grain filling
 
-At first the parameter P5 of the CERES model is descaled to the temperature sum for grain filling (X~m~) according to:
-     
+A common approach is to assume grain growth as a function of biomass accumulation after anthesis plus reserves (e.g. [@jamieson1998] or simply as the sum of accumulated biomass after a defined growth stage (e.g. Ritchie 1985). An alternative approach is to simulate potential grain yield as a linear increase in harvest index (HI) with accumulated thermal time from the beginning of grain-filling to maturity (e.g. [@sinclair1992; @chapman1993; @hammer1995; @goyne1996; @meinke1998a] assuming a constant or cultivar specific potential HI. Thereby, the harvest index is the ratio of grain to shoot dry mass at harvest. Simplified (according to the ‘SWMIN’ concept of Ceres-Wheat) the straw fraction of the shoot at harvest can be seen as proportional to the shoot mass at begin of spike growth (W\~0), where grain mass is proportional to the shoot accumulation after ear emergence (\$\Delta W\$):
+
+$$
+HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}}+\Delta W} 
+$$ {eq-HI1}
+
+The shoot mass accumulation is the product of the average amount of intercepted light (avL) times the average light use efficiency (avLUE) over the period of spike growth($\Delta t$)
+
+$$\Delta W=\Delta t\times avL\times avLUE$$ {eq-DeltaW}
+
+whereby $\Delta t$ is the duration of the spike growth phase in thermal time (dtt) divided by the average temperature during this period (avT):
+
+$$\Delta t=\frac{dtt}{avT}$$ {eq-DeltaT}
+
+Insertion of @eq-HI1 into @eq-DeltaT yields:
+
+$$\Delta W=\frac{dtt\cdot avL\cdot avLUE}{avT}=avQ\cdot avLUE\cdot dtt$$ {eq-DeltaW2}
+
+whereby avQ is photo-thermal-quotient \[MJ.°C-1\], defined as the ratio of mean global radiation and mean temperature over the period of $\Delta t$.
+
+#### Potential harvest index
+
+Assuming dtt and avLUE as constant, variation in HI is a function of W0 and avQ only. In unstressed crops the variation in W0 is small compared to the variation of $\Delta W$, which is more influenced by water limitation. Thus, the potential HI (HI~pot~) is dominated by avQ. Following this reasoning, the potential HI in HumeWheat is calculated as a function of photo-thermal-quotient avQHI \[MJ.°C-1\] defined as the running ratio of mean global radiation and mean temperature over the period between booting and mid of milk ripe stage (BBCH 50-75):
+
+$$HI_{pot}(t)=H{{I}_{\operatorname{int}}}+H{{I}_{inc}}\times av{{Q}_{HI}}(t)$$ {eq-HIpot}
+
+where $HI_{int}$ and $HI_{inc}$ are parameters of the regression equation. The default values of $HI_{int}$ and $HI_{inc}$ are set to 0.196 and 0.2786 in the model.
+
+![Potential harvest index as a function of the quotient of cumulative radiation to temperature sum during grain filling where $QHI_{INC}$ and $QHI_{INT}$ are parameters of the regression equation. The default values of $QHI_{INC}$ and $QHI_{INT}$ are set to 0.196 and 0.2786 in the model.](HI_regression.png){fig-align="center"}
+
+The value of QHI is continuously calculated/updated from BBCH 60 to BBCH 75 as the ratio of sum of accumulated radiation to the sum of accumulated temperature since \>= BBCH 60.
+
+```{r}
+#| label: CalcRHI
+#| echo: false
+# parameter P5 is descaled to Xm
+P5 <- 11.67
+Plants <- 300
+
+QHI_INC <- 0.196
+QHI_INT <- 0.2786
+
+QHI <- 1.3
+
+potHI <- QHI_INC * QHI + QHI_INT
+
+Xm <- (P5 + 21.5) / 0.05
+
+Xmid <- 250
+
+TOPWT_pl <- 1000
+Senwt_pl <- 0
+iniGRNWT <- 3.5 # initial grain weight (CW 3) [mg]
+
+GPP <- 8000000/50/300
+
+RHI_ini <- ((GPP * (iniGRNWT / 1000)) / TOPWT_pl) * (1 / potHI)
+
+r_RHI <- log(1 / RHI_ini - 1) / Xmid
+
+K_RHI <- 1#((exp(r_RHI * Xm) - 1) * RHI_ini) / (exp(r_RHI * Xm) * RHI_ini - 1)
+
+b_RHI <- (K_RHI - RHI_ini) / RHI_ini
+SUMDTTGF <- seq(0, 600)
+
+RHI <- K_RHI / (1 + b_RHI * exp(-r_RHI * SUMDTTGF))
+
+GRNWT_pl <- TOPWT_pl*potHI/Plants
+
+potGROGRN <- (TOPWT_pl + Senwt_pl) * potHI * RHI - GRNWT_pl
+
+#GROGRN <- max(0, min(potGROGRN, STMWT_pl - Swmin))
+
+
+```
+
+
+#### Dynamics of grain filling
+
+According to Ritchie and Godwin (1987), the grain mass GRNWT~ini~ $[mg\cdot grain^{-1}]$ is initialized with 3.5 at BBCH stage 65.
+
+##### EC stages 40 to 65
+
+In order to consider pre/early flowering growth of the ear and the spike, die grain weight is linearly increased from BBCH 40 to 65 up to the value of 3.5 mg:
+
+$$
+\frac{GRNWT_{pl}}{dt} = \frac{GRNWT_{ini}}{1000} \cdot GPPVAR \cdot min \left( 1, \frac{EC - 40} {65 - 40} \right) - GRNWT_{pl}
+$$ {#eq-GRNWTpl}
+
+Because the spike is assumed as part of the stem fraction, stem weight is reduced by the sum of the initial grain mass at beginning of grain filling.
+
+$$\frac {dSTMWT_{pl}}{dt} = \frac {dSTMWT_{pl}}{dt} - \frac {dGRNWT_{pl}}{dt}$$ {#eq-STMWTpl}
+
+##### EC stages 65 to 75
+
+The dynamisation of grain filling from the potential harvest index approach is done by inserting a relative harvest index or relativ potential harvest index (RHI) which is increasing during the grain filling according to a logistic growth function.
+
+At first the parameter P5 which determines the length of the grain filling phase within the CERES model is descaled to the temperature sum for grain filling (X~m~) according to:
+
 $$X_m = \frac{(P5 + 21.5) } {0.05}$$ {#eq-Xm}
-     
-The mid of the grain filling phase is calculated from the inflexion point of the logistic function of the grain filling phase *dECDP* which is set to 250 [°Cd].
 
-$$X_{mid} = dECDP$$ {#eq-Xmid} 
+The mid of the grain filling phase is estimated from the inflection point of the logistic function of the grain filling phase using the parameter *dECDP* which is set to 250 \[°Cd\], but should be in an order of 0.5 times X\~m.
 
-The initial ratio of the harvest index to the potential harvest index HI/potHI.
+$$X_{mid} = dECDP$$ {#eq-Xmid}
 
-$$INI_{GF} = ((GPP \cdot \frac{ (GRNWT_{ini} / 1000))} { TOPWT_{pl})} \cdot \frac{1}{HI_{pot}}$$ {#eq-INIGF}
-      
-      
-The relative growth rate of the grain filling phase is calculated from the logistic function of the grain filling phase according to the following equation:
+The initial ratio of the harvest index to the potential harvest index HI/potHI (relative harvest index, RHI) is called RHI~ini~ is calculated from the ratio of the initial grain weight (GRNWT~ini~) to the top weight of the plant (TOPWT~pl~) and the potential harvest index (HI~pot~) according to the following equation:
 
-$$r_{GF} = \frac{ln( 1 / GF_{ini} - 1)} {Xmid}$$ {#eq-rGF}
+$$RHI_{ini} =  \frac{ GPP \cdot GRNWT_{ini} / 1000} { TOPWT_{pl}} \cdot \frac{1}{HI_{pot}}$$ {#eq-RHIINI}
 
+The intrinsic growth rate of the logistic increase of RHI during the grain filling phase r~RHI~ is according to the following equation from the initial relative harvest index (RHI~ini~) and the temperature sum of mid of the grain filling phase (X~mid~)) approximated by the inflection point of the logistic growth equation:
 
-$$K_{GF} = ((exp(r_{GF} * X_m) - 1) * GF_{ini}) / (exp(r_{GF} * X_m) * GF_{ini} - 1)$$ {#eq-KGF}
+$$r_{RHI} = ln \left( \frac{ 1 } {RHI_{ini} - 1 }\right) \cdot \frac{1}{Xmid}$$ {#eq-rRHI}
 
+The derivation of this equation is based on equation determining the time of the inflection point of a logistic growth function t_{inf} here called X~mid~ and the assumption that the maximum value of RHI is 1:
 
-$$R0_GF = (K_{GF} - GF_{ini} / GF_{ini}$$ {#eq-R0GF}
+$$t_{inf}​= \frac{1}{r_{RHI}} \cdot ln \left( \frac{1−RHI_{ini}}{RHI_{ini}} \right)$$ {#eq-tinf}
 
+Solving equation @eq-tinf for r_{RHI} yields equation @eq-rRHI.
 
-$$HI_potHI = K_{GF} / (1 + R0_{GF} * exp(-r_{GF} \cdot SUMDTTGF))$$ {#eq-HIpotHI}
-      
-$$GROGRN_{pot} = (TOPWT_{pl} + Senwt_{pl}) \cdot  HI_{pot} * HI_potHI - GRNWT_{pl}$$ {#eq-GROGRNpot}
-        
+The growth rate parameter b_RHI is calculated from the potential relative harvest index (which is 1) and the initial ratio of the harvest index to the potential harvest index according to the following equation:
 
-The growth rate of grain per plant is calculated from  the potential, sink limited growth rate of the grains and the difference between the acutal stem weight and the minimum stem weight:
-$$GROGRN = max(0, min(GROGRN_{pot}, STMWT_{pl} - Swmin))$$
+$$b_{RHI} = \frac{1 - RHI_{ini}}{ RHI_{ini}}$$ {#eq-bRHI}
 
-$$ \frac{STMWT_{pl}}{dt} := \frac{STMWT_{pl}}{dt} - GROGRN$$
-The grain weight per plant is calculated from the grain weight per plant and the growth rate of the grain weight per plant according to the following equation:
-$$\frac{GRNWT_{pl}}{dt} = GROGRN$$ {#eq-GRNWTpl}
- 
+The ratio of the actual harvest index to the potential harvest index (RHI) is calculated from a logistic equation with the potential harvest index K~GF~ and the relative growth rate of the grain filling phase according to the following equation:
+
+$$RHI = \frac{1}{(1 + b_{RHI} * e^{(-r_{RHI} \cdot SUMDTT_{GF}))}}$$ {#eq-RHI}
+
+See @fig-RHI for the relationship between the relative potential harvest index and the cumulative temperature sum during grain filling.
+
+```{r}
+#| include: TRUE
+#| label: fig-RHI
+#| fig.cap: Relative potential harvest index as a function of the cumulative temperature sum during grain filling
+#| fig.align: "center"
+
+plot(SUMDTTGF, RHI, type = "l", xlab = "SumDTTGF [°Cd]", ylab = "Relative harvest index (RHI)")
+```
+
+The grain DM growth rate GROGRN is calculated from the potential, sink limited growth rate of the grains and the difference between the actual stem weight and the minimum stem weight:
+
+$$GROGRN_{pot} = (TOPWT_{pl} + Senwt_{pl}) \cdot  HI_{pot} * RHI - GRNWT_{pl}$$ {#eq-GROGRNpot}
+
+The growth rate of grain per plant is calculated from the potential, sink limited growth rate of the grains and the difference between the actual stem weight and the minimum stem weight *SWMIN*:
+
+$$GROGRN = max(0, min(GROGRN_{pot}, STMWT_{pl} - SWMIN))$$
+
+$$ \frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - GROGRN$$
+
+The grain weight per plant is calculated from the grain weight per plant and the growth rate of the grain weight per plant according to the following equation: $$\frac{GRNWT_{pl}}{dt} = GROGRN$$
 
 # Leaf Area Development
 
