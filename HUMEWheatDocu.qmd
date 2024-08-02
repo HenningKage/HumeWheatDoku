@@ -834,12 +834,47 @@ Above the critical BBCH stage ($EC_{crit_{NcLeaf}}$, set to EC 27, i.e. end of t
 
 $$Nc_{opt_{Leaf}} = Nc_{Leaf_{Vf1}} \cdot LFWT_{m2} + Nc_{Leaf_{Vf2}}$$
 
+where $Nc_{Leaf_{Vf1}}$ and $Nc_{Leaf_{Vf2}}$ are parameters of the linear relationship between leaf nitrogen concentration and leaf dry matter. The default values of $Nc_{Leaf_{Vf1}}$ and $Nc_{Leaf_{Vf2}}$ are set to -0.0061 and 5.9543 in the model.
+
+```{r}
+#| label: fig-NcLeaf
+#| ref-label: NcLeafplot
+#| fig-cap: Leaf nitrogen concentration under optimal N supply as a function of leaf dry matter
+#| fig-align: center
+#| echo: false
+
+NcLeaf <- function(LFWT, NcLeaf_a, NcLeaf_b){
+  NcLeaf <- NcLeaf_a * LFWT + NcLeaf_b
+  return(NcLeaf)
+}
+
+NcLeaf_a <- -0.0061
+NcLeaf_b <- 5.9543
+
+LFWT <- seq(0, 400, 1)
+
+df_NcLeaf <- data.frame(LFWT = LFWT)
+df_NcLeaf$NcLeaf <- NcLeaf(df_NcLeaf$LFWT, NcLeaf_a, NcLeaf_b)
+
+ggplot(data = df_NcLeaf) +
+  geom_line(aes(x = LFWT, y = NcLeaf, color=NcLeaf), size=2) +
+  labs(x = "Leaf dry matter [g m^-2]", y = "NcLeaf [%]") +
+  theme_bw(base_size = 20) +
+  scale_color_gradient(low = "yellow", high = "darkgreen") +
+  scale_y_continuous(limits = c(0, 6)) 
+
+
+```
+
+
+
 The daily change of the leaf nitrogen amount per plant is calculated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant:
 
 $$\frac {N_{Leaf_{pl}}}{dt} = \frac {LFWT_{pl}}{dt} \cdot Nc_{opt_{Leaf}} / 100 + Nc_{opt_{Leaf}} / 100 \cdot LFWT_{pl} - N_{Leaf_{pl}}$$ {#eq-NLeafpl}
 
 ### Stem N
 
+A similar approach is used to calculate the stem nitrogen concentration under optimal N supply. The stem nitrogen concentration under optimal N supply is, however, calculated from a non-linear dilution curve:
 
 $$NearOptNCStem = 0.98 \cdot (1 / (NcStem_a + NcStem_b \cdot STMWT_{m2}))$$
 
@@ -1061,6 +1096,29 @@ $$ \frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - GROGRN$$
 The grain weight per plant is calculated from the grain weight per plant and the growth rate of the grain weight per plant according to the following equation: $$\frac{GRNWT_{pl}}{dt} = GROGRN$$
 
 # Leaf Area Development
+
+Many crop models are simulating leaf area as a function of simulated leaf biomass multiplied with the ratio of leaf area over leaf dry weight (SLA). Thereby two fundamentally different approaches can be employed: (i) The SLA refers to the new leaf area formed or (ii) to the overall canopy of the crop (Marcelis et al. 1998). The former approach considers LAI as a state variable, while SLA refers to the change rate of this state. With the latter approach LAI is usually defined as a derived variable. Both approaches have their justification: During early leaf growth SLA is decreasing with increasing leaf size, because of the greater proportion of structural C needed to maintain bigger leafs (Rawson 1987). Thus the SLA of the new formed leafs is smaller, while the SLA of the previously formed, smaller leafs remains higher. This relationship is reflected by the decrease in SLA of new formed leaf area. As a converse effect, the influence of mutual shading becomes more important with rising LAI, what enhances SLA. The influence of shading does not concern new formed leaf area of the top leaves, but earlier formed, lower inserted leaves. Considering this aspect, it is not appropriate to conserve the SLA of already formed leaves. This implies an interaction between SLA and LAI, which should be taken into account. During early leaf growth the decrease due to leaf size probably determines SLA, but is soon dominated by the influence of mutual shading. The transition between these two phases is variable, which complicates the SLA modelling. Furthermore, for winter annual crops also the drastically changing light environment from sowing in autumn until rapid growth in spring affects SLA.
+
+A compromising solution of both approaches is provided by the simulated leaf area development in HumeWheat. Thereby a potential SLA (SLApot) refers to the complete canopy, but affects only the LAI increase, whereas the reduction of LAI due to the senescence processes is calculated by separate routines:
+
+$$LA{{I}_{new}}(t)=\max (0,{{W}_{leaf}}(t)\times SLA_{pot}(t) \cdot 10^{-4} - LAI(t))$$ {#eq-LAI_new}
+
+Daily LAI increment is calculated from the increase in total leaf area and total senescence:
+
+
+$$\frac{dLAI}{dt}=LA{{I}_{new}}(t)-\frac{dSen}{dt}$$ {#eq-dLAI}
+
+## Calculation of SLA~pot~
+
+At the beginning of leaf growth SLApot is initialized with the maximum SLA (SLAmax). Two hypothetical SLA values (SLALAI, SLATrans) are calculated to describe the further SLA development. The first describes SLA with respect on mutual shading as a function of LAI.
+
+$$SLA_{LAI}(t)=a_{SLA}+b_{SLA} \cdot LAI(t)$$ {#eq-SLALAI}
+
+The second describes the transition phase between SLAmax and SLALAI:
+
+$$SLA_{T\text{rans}}}(t)=SL{{A}_{LAI}}(t)+ \\ 
+ & \mathop{{}}^{{}}\mathop{{}}^{{}}\mathop{{}}^{{}}(SL{{A}_{\max }}-SL{{A}_{LAI}}(t))\cdot \exp (fdec1\cdot LAI(t)+fdec2) \\ 
+$$
 
 ## Senescence
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Agronomy and Crop Science Group, Kiel University">
-<meta name="dcterms.date" content="2024-07-10">
+<meta name="dcterms.date" content="2024-08-02">
 
 <title>Simulation of Wheat Growth and Development</title>
 <style>
@@ -206,7 +206,8 @@ window.Quarto = {
   </ul></li>
   <li><a href="#leaf-area-development" id="toc-leaf-area-development" class="nav-link" data-scroll-target="#leaf-area-development"><span class="header-section-number">4</span> Leaf Area Development</a>
   <ul>
-  <li><a href="#senescence" id="toc-senescence" class="nav-link" data-scroll-target="#senescence"><span class="header-section-number">4.1</span> Senescence</a></li>
+  <li><a href="#calculation-of-slapot" id="toc-calculation-of-slapot" class="nav-link" data-scroll-target="#calculation-of-slapot"><span class="header-section-number">4.1</span> Calculation of SLA<sub>pot</sub></a></li>
+  <li><a href="#senescence" id="toc-senescence" class="nav-link" data-scroll-target="#senescence"><span class="header-section-number">4.2</span> Senescence</a></li>
   </ul></li>
   <li><a href="#evapotranspiration" id="toc-evapotranspiration" class="nav-link" data-scroll-target="#evapotranspiration"><span class="header-section-number">5</span> Evapotranspiration</a></li>
   <li><a href="#soil-water" id="toc-soil-water" class="nav-link" data-scroll-target="#soil-water"><span class="header-section-number">6</span> Soil water</a></li>
@@ -240,7 +241,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 10, 2024</p>
+      <p class="date">August 2, 2024</p>
     </div>
   </div>
   
@@ -779,11 +780,27 @@ Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf
 <h3 data-number="3.5.1" class="anchored" data-anchor-id="calc_leaf_n_change"><span class="header-section-number">3.5.1</span> Calc_Leaf_N_Change</h3>
 <p>Above the critical BBCH stage (<span class="math inline">EC_{crit_{NcLeaf}}</span>, set to EC 27, i.e.&nbsp;end of tillering) the optimum leaf nitrogen concentration is calculated from a linear dilution curve:</p>
 <p><span class="math display">Nc_{opt_{Leaf}} = Nc_{Leaf_{Vf1}} \cdot LFWT_{m2} + Nc_{Leaf_{Vf2}}</span></p>
+<p>where <span class="math inline">Nc_{Leaf_{Vf1}}</span> and <span class="math inline">Nc_{Leaf_{Vf2}}</span> are parameters of the linear relationship between leaf nitrogen concentration and leaf dry matter. The default values of <span class="math inline">Nc_{Leaf_{Vf1}}</span> and <span class="math inline">Nc_{Leaf_{Vf2}}</span> are set to -0.0061 and 5.9543 in the model.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-NcLeaf" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-NcLeaf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="HUMEWheatDocu_files/figure-html/fig-NcLeaf-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-NcLeaf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: Leaf nitrogen concentration under optimal N supply as a function of leaf dry matter
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <p>The daily change of the leaf nitrogen amount per plant is calculated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant:</p>
 <p><span id="eq-NLeafpl"><span class="math display">\frac {N_{Leaf_{pl}}}{dt} = \frac {LFWT_{pl}}{dt} \cdot Nc_{opt_{Leaf}} / 100 + Nc_{opt_{Leaf}} / 100 \cdot LFWT_{pl} - N_{Leaf_{pl}} \tag{57}</span></span></p>
 </section>
 <section id="stem-n" class="level3" data-number="3.5.2">
 <h3 data-number="3.5.2" class="anchored" data-anchor-id="stem-n"><span class="header-section-number">3.5.2</span> Stem N</h3>
+<p>A similar approach is used to calculate the stem nitrogen concentration under optimal N supply. The stem nitrogen concentration under optimal N supply is, however, calculated from a non-linear dilution curve:</p>
 <p><span class="math display">NearOptNCStem = 0.98 \cdot (1 / (NcStem_a + NcStem_b \cdot STMWT_{m2}))</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>NcStem <span class="ot">&lt;-</span> <span class="cf">function</span>(STMWT, NcStem_a, NcStem_b){</span>
@@ -814,7 +831,7 @@ Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf
 <img src="HUMEWheatDocu_files/figure-html/fig-NcStem-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-NcStem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15: Stem nitrogen concentration as a function of stem dry matter
+Figure&nbsp;16: Stem nitrogen concentration as a function of stem dry matter
 </figcaption>
 </figure>
 </div>
@@ -828,14 +845,14 @@ Figure&nbsp;15: Stem nitrogen concentration as a function of stem dry matter
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="grain-number"><span class="header-section-number">3.6.1</span> Grain number</h3>
 <p>The model for grain number follows the assumption that the grain number per square meter (GPSM) is a function of the shoot dry matter at mid flowering i.e.&nbsp;EC65 (DM~65), the nitrogen nutrition index at EC 60 (NNI~60), and the average photothermal quotient from 45 d preceding anthesis (Q45):</p>
 <p><span id="eq-GPSM"><span class="math display">GPSM= G4\cdot ln \left( DM_{65} \cdot min \left( NNI_{60}\right) \cdot Q45 \right)^{a} \tag{58}</span></span></p>
-<p>where GM4 is a parameter of the regression equation. The default values of G4 and a are set to149.153 and 2.6233 in the model (see <a href="#fig-GPSM" class="quarto-xref">Figure&nbsp;16</a>). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_a. See <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span> for the derivation of this approach .</p>
+<p>where GM4 is a parameter of the regression equation. The default values of G4 and a are set to149.153 and 2.6233 in the model (see <a href="#fig-GPSM" class="quarto-xref">Figure&nbsp;17</a>). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_a. See <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span> for the derivation of this approach .</p>
 <div id="fig-GPSM" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-GPSM-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="GPSM_regression.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-GPSM-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16: Relationship between the log transformed product of different plant parameters (NNI60 = N nutrition status of wheat crops at anthesis, Q45= the photo thermal quotient 45 d preceding anthesis, DM65 = total shoot dry matter per square meter at anthesis) and grain number per square meter (GPSM) of wheat crops from field experiments with different N fertilizations from <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span>.
+Figure&nbsp;17: Relationship between the log transformed product of different plant parameters (NNI60 = N nutrition status of wheat crops at anthesis, Q45= the photo thermal quotient 45 d preceding anthesis, DM65 = total shoot dry matter per square meter at anthesis) and grain number per square meter (GPSM) of wheat crops from field experiments with different N fertilizations from <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span>.
 </figcaption>
 </figure>
 </div>
@@ -908,7 +925,7 @@ HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}
 <p><span id="eq-bRHI"><span class="math display">b_{RHI} = \frac{1 - RHI_{ini}}{ RHI_{ini}} \tag{69}</span></span></p>
 <p>The ratio of the actual harvest index to the potential harvest index (RHI) is calculated from a logistic equation with the potential harvest index K<sub>GF</sub> and the relative growth rate of the grain filling phase according to the following equation:</p>
 <p><span id="eq-RHI"><span class="math display">RHI = \frac{1}{(1 + b_{RHI} * e^{(-r_{RHI} \cdot SUMDTT_{GF}))}} \tag{70}</span></span></p>
-<p>See <a href="#fig-RHI" class="quarto-xref">Figure&nbsp;17</a> for the relationship between the relative potential harvest index and the cumulative temperature sum during grain filling.</p>
+<p>See <a href="#fig-RHI" class="quarto-xref">Figure&nbsp;18</a> for the relationship between the relative potential harvest index and the cumulative temperature sum during grain filling.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SUMDTTGF, RHI, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"SumDTTGF [°Cd]"</span>, <span class="at">ylab =</span> <span class="st">"Relative harvest index (RHI)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -918,7 +935,7 @@ HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}
 <img src="HUMEWheatDocu_files/figure-html/fig-RHI-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-RHI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;17: Relative potential harvest index as a function of the cumulative temperature sum during grain filling
+Figure&nbsp;18: Relative potential harvest index as a function of the cumulative temperature sum during grain filling
 </figcaption>
 </figure>
 </div>
@@ -937,8 +954,22 @@ Figure&nbsp;17: Relative potential harvest index as a function of the cumulative
 </section>
 <section id="leaf-area-development" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Leaf Area Development</h1>
-<section id="senescence" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="senescence"><span class="header-section-number">4.1</span> Senescence</h2>
+<p>Many crop models are simulating leaf area as a function of simulated leaf biomass multiplied with the ratio of leaf area over leaf dry weight (SLA). Thereby two fundamentally different approaches can be employed: (i) The SLA refers to the new leaf area formed or (ii) to the overall canopy of the crop (Marcelis et al.&nbsp;1998). The former approach considers LAI as a state variable, while SLA refers to the change rate of this state. With the latter approach LAI is usually defined as a derived variable. Both approaches have their justification: During early leaf growth SLA is decreasing with increasing leaf size, because of the greater proportion of structural C needed to maintain bigger leafs (Rawson 1987). Thus the SLA of the new formed leafs is smaller, while the SLA of the previously formed, smaller leafs remains higher. This relationship is reflected by the decrease in SLA of new formed leaf area. As a converse effect, the influence of mutual shading becomes more important with rising LAI, what enhances SLA. The influence of shading does not concern new formed leaf area of the top leaves, but earlier formed, lower inserted leaves. Considering this aspect, it is not appropriate to conserve the SLA of already formed leaves. This implies an interaction between SLA and LAI, which should be taken into account. During early leaf growth the decrease due to leaf size probably determines SLA, but is soon dominated by the influence of mutual shading. The transition between these two phases is variable, which complicates the SLA modelling. Furthermore, for winter annual crops also the drastically changing light environment from sowing in autumn until rapid growth in spring affects SLA.</p>
+<p>A compromising solution of both approaches is provided by the simulated leaf area development in HumeWheat. Thereby a potential SLA (SLApot) refers to the complete canopy, but affects only the LAI increase, whereas the reduction of LAI due to the senescence processes is calculated by separate routines:</p>
+<p><span id="eq-LAI_new"><span class="math display">LA{{I}_{new}}(t)=\max (0,{{W}_{leaf}}(t)\times SLA_{pot}(t) \cdot 10^{-4} - LAI(t)) \tag{72}</span></span></p>
+<p>Daily LAI increment is calculated from the increase in total leaf area and total senescence:</p>
+<p><span id="eq-dLAI"><span class="math display">\frac{dLAI}{dt}=LA{{I}_{new}}(t)-\frac{dSen}{dt} \tag{73}</span></span></p>
+<section id="calculation-of-slapot" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="calculation-of-slapot"><span class="header-section-number">4.1</span> Calculation of SLA<sub>pot</sub></h2>
+<p>At the beginning of leaf growth SLApot is initialized with the maximum SLA (SLAmax). Two hypothetical SLA values (SLALAI, SLATrans) are calculated to describe the further SLA development. The first describes SLA with respect on mutual shading as a function of LAI.</p>
+<p><span id="eq-SLALAI"><span class="math display">SLA_{LAI}(t)=a_{SLA}+b_{SLA} \cdot LAI(t) \tag{74}</span></span></p>
+<p>The second describes the transition phase between SLAmax and SLALAI:</p>
+<p><span class="math display">SLA_{T\text{rans}}}(t)=SL{{A}_{LAI}}(t)+ \\
+&amp; \mathop{{}}^{{}}\mathop{{}}^{{}}\mathop{{}}^{{}}(SL{{A}_{\max }}-SL{{A}_{LAI}}(t))\cdot \exp (fdec1\cdot LAI(t)+fdec2) \\
+</span></p>
+</section>
+<section id="senescence" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="senescence"><span class="header-section-number">4.2</span> Senescence</h2>
 </section>
 </section>
 <section id="evapotranspiration" class="level1" data-number="5">
@@ -953,11 +984,11 @@ Figure&nbsp;17: Relative potential harvest index as a function of the cumulative
 </section>
 <section id="miscellaneous" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Miscellaneous</h1>
-<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;72</a>).</p>
+<p>Temperature depended processes are calculated generally using an effective temperature <em>(T<sub>eff</sub>)</em> [°C], which is the mean daily air temperature [°C] <em>(T<sub>air</sub>)</em> minus a base temperature <em>(T<sub>base</sub> =&nbsp;2&nbsp;°C)</em> (<a href="#eq-effective-temperature" class="quarto-xref">Eq.&nbsp;75</a>).</p>
 <p><span id="eq-effective-temperature"><span class="math display">T_{eff}  = \begin{cases}
 T_{air} - T_{base} &amp; \text{if}~T&gt;0\\
 0 &amp; \text{if}~T&lt;2
-\end{cases} \tag{72}</span></span></p>
+\end{cases} \tag{75}</span></span></p>
 </section>
 <section id="parameters" class="level1" data-number="9">
 <h1 data-number="9"><span class="header-section-number">9</span> Parameters</h1>
