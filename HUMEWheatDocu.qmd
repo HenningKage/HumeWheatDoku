@@ -16,7 +16,7 @@ crossref:
 format:
  html:
   mermaid:
-    theme: neutral
+    theme: forest
     mainfont: Helvetica Neue, Helvetica, Arial, sans
     monofont: Cascadia Mono, Menlo, Consolas, Courier New, Courier
     mathfont: "TeX Gyre Termes Math"
@@ -66,7 +66,7 @@ This document is as a short documentation of the wheat crop-soil-model (CSM) ‘
 The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in [@johnen2012]. The phenological process in CW is divided into nine developmental or growth stages (GS) according to [@ritchie2015] (@tbl-CWDevStages), the common approach in Europe, however is the BBCH stage [@lancashire1991a]. Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.
 
 | GS  | BBCH | Phase                                                                            |
-|------------------|------------------|------------------------------------|
+|-------------------|-------------------|----------------------------------|
 | 7   | 00   | Fallow                                                                           |
 | 8   | 00   | Sowing to germination                                                            |
 | 9   | 05   | Germination to emergence                                                         |
@@ -279,7 +279,7 @@ The period of grain filling is for the GS development rate defined by a genotype
 
 $$\frac{dGS}{dt}=\frac{\max (0,(T-{{T}_{b}})-1)}{TSumGF}$$ {#eq-dGS_dt_GS5}
 
-$$TSumGF = \frac{(P5+21.5)}{0.05}$$ {#eq-TSumGF}
+$$TSum_{GF} = \frac{(P5+21.5)}{0.05}$$ {#eq-TSumGF}
 
 The rate of change of BBCH stages is during that stage simply synchronized with the GS rate according to equation @eq-dBBCH_dt_GS5.
 
@@ -826,7 +826,11 @@ $$\begin{align*}
 
 where $Nc_{leaf_{min}}$ is the minimum leaf nitrogen concentration, $rgr_{NcLeafWinter}$ is the relative growth rate of the leaf nitrogen concentration, and $GlobRad$ is the global radiation. The default values of $Nc_{leaf_{min}}$ and $rgr_{NcLeafWinter}$ are set to 1.5 and 0.0001 in the model. The value of $Nc_{leaf_{min}}$ is the minimum leaf nitrogen concentration. The value of $rgr_{NcLeafWinter}$ is the relative growth rate of the leaf nitrogen concentration. The value of $GlobRad$ is the global radiation. The value of $Nc_{leaf_{min}}$ is the minimum leaf nitrogen concentration. The value of $rgr_{NcLeafWinter}$ is the relative growth rate of the leaf nitrogen concentration. The value of $GlobRad$ is the global radiation.
 
-if DayOfYear.v \< 150 then if TEMPM.v \> 0 then // transitional phase between autumn and spring Nc_optLeaf.v := NcLeafWinter.v;
+if DayOfYear \< 150 then if TEMPM \> 0 then // transitional phase between autumn and spring 
+
+$$Nc_optLeaf = NcLeafWinter$$ {#eq-NcOptLeafWinter}
+
+else
 
 ### Calc_Leaf_N_Change
 
@@ -865,8 +869,6 @@ ggplot(data = df_NcLeaf) +
 
 
 ```
-
-
 
 The daily change of the leaf nitrogen amount per plant is calculated from the daily change of leaf dry matter and the leaf nitrogen concentration under optimal N supply and the difference between the actual leaf nitrogen amount and the optimal leaf nitrogen amount in the leaf fraction of a plant:
 
@@ -908,9 +910,6 @@ ggplot(data = df_NcStem) +
 
 ```
 
-
-
-
 ## Grain filling
 
 ### Grain number
@@ -925,12 +924,11 @@ where GM4 is a parameter of the regression equation. The default values of G4 an
 
 For the estimation of grains per plant in order to calculate the initial value of grain N an early estimate of GPSM is derived from the shoot dry matter at anthesis (TOPWT_m2) and the photothermal quotient 45 d preceding anthesis (Q45):
 
-if (EC.v >= 40) and (NNI60.v <= 0) and 
-  if $ln(TOPWT_{m2} \cdot Q45) > 0$ then 
+if (EC \>= 40) and (NNI60 \<= 0) and if $ln(TOPWT_{m2} \cdot Q45) > 0$ then
 
 $$GPPVAR = \left ( GM4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{GM4_2} \right) / plants$$ {#eq-GPPVAR}
 
-where GM4~2 is a parameter of the regression equation. The default value of GM4~2 is set to 0.0001 in the model.
+where GM4\~2 is a parameter of the regression equation. The default value of GM4\~2 is set to 0.0001 in the model.
 
 ### Initialisation
 
@@ -975,7 +973,7 @@ where $HI_{int}$ and $HI_{inc}$ are parameters of the regression equation. The d
 
 ![Potential harvest index as a function of the quotient of cumulative radiation to temperature sum during grain filling where $QHI_{INC}$ and $QHI_{INT}$ are parameters of the regression equation. The default values of $QHI_{INC}$ and $QHI_{INT}$ are set to 0.196 and 0.2786 in the model.](HI_regression.png){fig-align="center"}
 
-The value of QHI is continuously calculated/updated from BBCH 60 to BBCH 75 as the ratio of sum of accumulated radiation to the sum of accumulated temperature since \>= BBCH 60.
+The value of QHI is continuously calculated/updated from BBCH 60 to BBCH 75 from the ratio of sum of accumulated radiation to the sum of accumulated temperature since \>= BBCH 50.
 
 ```{r}
 #| label: CalcRHI
@@ -1021,7 +1019,6 @@ potGROGRN <- (TOPWT_pl + Senwt_pl) * potHI * RHI - GRNWT_pl
 
 ```
 
-
 #### Dynamics of grain filling
 
 According to Ritchie and Godwin (1987), the grain mass GRNWT~ini~ $[mg\cdot grain^{-1}]$ is initialized with 3.5 at BBCH stage 65.
@@ -1058,11 +1055,11 @@ The intrinsic growth rate of the logistic increase of RHI during the grain filli
 
 $$r_{RHI} = ln \left( \frac{ 1 } {RHI_{ini} - 1 }\right) \cdot \frac{1}{Xmid}$$ {#eq-rRHI}
 
-The derivation of this equation is based on equation determining the time of the inflection point of a logistic growth function t_{inf} here called X~mid~ and the assumption that the maximum value of RHI is 1:
+The derivation of this equation is based on equation determining the time of the inflection point of a logistic growth function t\_{inf} here called X~mid~ and the assumption that the maximum value of RHI is 1:
 
 $$t_{inf}​= \frac{1}{r_{RHI}} \cdot ln \left( \frac{1−RHI_{ini}}{RHI_{ini}} \right)$$ {#eq-tinf}
 
-Solving equation @eq-tinf for r_{RHI} yields equation @eq-rRHI.
+Solving equation @eq-tinf for r\_{RHI} yields equation @eq-rRHI.
 
 The growth rate parameter b_RHI is calculated from the potential relative harvest index (which is 1) and the initial ratio of the harvest index to the potential harvest index according to the following equation:
 
@@ -1097,30 +1094,233 @@ The grain weight per plant is calculated from the grain weight per plant and the
 
 # Leaf Area Development
 
-Many crop models are simulating leaf area as a function of simulated leaf biomass multiplied with the ratio of leaf area over leaf dry weight (SLA). Thereby two fundamentally different approaches can be employed: (i) The SLA refers to the new leaf area formed or (ii) to the overall canopy of the crop (Marcelis et al. 1998). The former approach considers LAI as a state variable, while SLA refers to the change rate of this state. With the latter approach LAI is usually defined as a derived variable. Both approaches have their justification: During early leaf growth SLA is decreasing with increasing leaf size, because of the greater proportion of structural C needed to maintain bigger leafs (Rawson 1987). Thus the SLA of the new formed leafs is smaller, while the SLA of the previously formed, smaller leafs remains higher. This relationship is reflected by the decrease in SLA of new formed leaf area. As a converse effect, the influence of mutual shading becomes more important with rising LAI, what enhances SLA. The influence of shading does not concern new formed leaf area of the top leaves, but earlier formed, lower inserted leaves. Considering this aspect, it is not appropriate to conserve the SLA of already formed leaves. This implies an interaction between SLA and LAI, which should be taken into account. During early leaf growth the decrease due to leaf size probably determines SLA, but is soon dominated by the influence of mutual shading. The transition between these two phases is variable, which complicates the SLA modelling. Furthermore, for winter annual crops also the drastically changing light environment from sowing in autumn until rapid growth in spring affects SLA.
+Many crop models are simulating leaf area as a function of simulated leaf biomass multiplied with the ratio of leaf area over leaf dry weight (SLA). Thereby two fundamentally different approaches can be employed: (i) The SLA refers to the new leaf area formed or (ii) to the overall canopy of the crop [@marcelis1998]. The former approach considers LAI as a state variable, while SLA refers to the change rate of this state. With the latter approach LAI is usually defined as a derived variable. Both approaches have their justification: During early leaf growth SLA is decreasing with increasing leaf size, because of the greater proportion of structural C needed to maintain bigger leafs [@rawson1987a]. Thus the SLA of the new formed leafs is smaller, while the SLA of the previously formed, smaller leafs remains higher. This relationship is reflected by the decrease in SLA of new formed leaf area. As a converse effect, the influence of mutual shading becomes more important with rising LAI, what enhances SLA. The influence of shading does not concern new formed leaf area of the top leaves, but earlier formed, lower inserted leaves. Considering this aspect, it is not appropriate to conserve the SLA of already formed leaves. This implies an interaction between SLA and LAI, which should be taken into account. During early leaf growth the decrease due to leaf size probably determines SLA, but is soon dominated by the influence of mutual shading. The transition between these two phases is variable, which complicates the SLA modelling. Furthermore, for winter annual crops also the drastically changing light environment from sowing in autumn until rapid growth in spring affects SLA.
 
-A compromising solution of both approaches is provided by the simulated leaf area development in HumeWheat. Thereby a potential SLA (SLApot) refers to the complete canopy, but affects only the LAI increase, whereas the reduction of LAI due to the senescence processes is calculated by separate routines:
+A compromising solution of both approaches is provided by the simulated leaf area development in HumeWheat. Thereby a potential SLA (SLA~pot~) refers to the complete canopy, but affects only the LAI increase, whereas the reduction of LAI due to the senescence processes is calculated by separate routines:
 
-$$LA{{I}_{new}}(t)=\max (0,{{W}_{leaf}}(t)\times SLA_{pot}(t) \cdot 10^{-4} - LAI(t))$$ {#eq-LAI_new}
+$$LAI_{new}(t)=\max (0,W_{leaf}(t) \cdot SLA_{pot}(t) \cdot 10^{-4} - LAI(t))$$ {#eq-LAI_new}
 
 Daily LAI increment is calculated from the increase in total leaf area and total senescence:
-
 
 $$\frac{dLAI}{dt}=LA{{I}_{new}}(t)-\frac{dSen}{dt}$$ {#eq-dLAI}
 
 ## Calculation of SLA~pot~
 
-At the beginning of leaf growth SLApot is initialized with the maximum SLA (SLAmax). Two hypothetical SLA values (SLALAI, SLATrans) are calculated to describe the further SLA development. The first describes SLA with respect on mutual shading as a function of LAI.
+At the beginning of leaf growth, i.e. after emergence of the first leaf SLA~pot~ is initialized with the maximum SLA (SLA~max~). The standard value of SLA~max~ is 250 \[cm^2^/g\].
 
-$$SLA_{LAI}(t)=a_{SLA}+b_{SLA} \cdot LAI(t)$$ {#eq-SLALAI}
+At later stages, i.e. after start of stem elongation (BBCH 31) The SLA usually increases due to mutual shading as a function of LAI.
 
-The second describes the transition phase between SLAmax and SLALAI:
+$$SLA_{LAI}(t)=a_{SLA}+b_{SLA} \cdot LAI(t)$$ {#eq-SLA_LAI}
 
-$$SLA_{T\text{rans}}}(t)=SL{{A}_{LAI}}(t)+ \\ 
- & \mathop{{}}^{{}}\mathop{{}}^{{}}\mathop{{}}^{{}}(SL{{A}_{\max }}-SL{{A}_{LAI}}(t))\cdot \exp (fdec1\cdot LAI(t)+fdec2) \\ 
-$$
+where $a_{SLA}$ and $b_{SLA}$ are parameters of the regression equation. The default values of $a_{SLA}$ and $b_{SLA}$ are set to 136.69 and 14.93 in the model (@fig-SLA). See Fig. 3b in [@ratjen2013].
+
+```{r}
+#| label: fig-SLA
+#| ref-label: SLAplot
+#| fig-cap: Specific leaf area as a function of leaf area index
+#| fig-align: center
+#| echo: false
+
+SLA <- function(LAI, a_SLA, b_SLA){
+  SLA <- a_SLA + b_SLA * LAI
+  return(SLA)
+}
+
+a_SLA <- 136.69
+b_SLA <- 14.93
+
+LAI <- seq(2, 5, 0.1)
+
+df_SLA <- data.frame(LAI = LAI)
+
+df_SLA$SLA <- SLA(df_SLA$LAI, a_SLA, b_SLA)
+
+ggplot(data = df_SLA) +
+  geom_line(aes(x = LAI, y = SLA), size=2) +
+  labs(x = "Leaf area index [m^2 m^-2]", y = "SLA [cm^2 g^-1]") +
+  theme_bw(base_size = 20) +
+  scale_y_continuous(limits = c(100, 300)) +
+  scale_x_continuous(limits = c(1.5, 5))
+
+
+```
+
+In order to describe the transition from the high SLA values after emergence to lower values followed by the subsequent increase due to the shading effects of increasing LAI a transition value of SLA (SLA~Trans~) is calculated:
+
+$$SLA_{Trans}(t)=SLA_{LAI}(t)+ (SLA_{max}-SLA_{LAI}(t)) \cdot e^{ (f_{dec1} \cdot LAI(t)+f_{dec2})}$$ {#eq-SLAtrans}
+
+where $f_{dec1}$ and $f_{dec2}$ are parameters describing the transition. The default values of $f_{dec1}$ and $f_{dec2}$ are set to -1.1237 and 0.3 in the model.
+
+In every time step the potential SLA is calculated as the minimum of the previous SLA and the calculated SLA~Trans~. If the old SLA is larger than SLA~LAI~, the SLA is equal to SLA~trans~, if not SLA is equal to SLA~LAI~.
+
+An example for the result of this algorithm is given in @fig-SLAtrans.
+
+```{r}
+#| label: fig-SLAtrans
+#| ref-label: SLAtransplot
+#| fig-cap: Specific leaf area as a function of leaf area index
+#| fig-align: center
+#| echo: false
+
+maxSLA <- 250
+a_SLA <- 136.69
+b_SLA <- 14.93
+SLA_B <- maxSLA # start SLA of juvenescent leavess (APSIM, Asseng 2003)
+
+f1_SLA <- -1.1237
+f2_SLA <- 0.3
+LAI <- seq(0, 5, 0.1)
+df_SLAtrans <- data.frame(LAI = LAI)
+df_SLAtrans$SLA <- NA
+df_SLAtrans[1, "SLA"] <- maxSLA
+
+for (i in 2:nrow(df_SLAtrans)){
+   SLAs <- min(maxSLA, a_SLA + b_SLA*df_SLAtrans[i,"LAI"])
+   if (df_SLAtrans[i-1, "SLA"] > SLAs){
+      # transition phase between initial SLA and later phase where
+      # mutual shading dominates SLA
+     SLAw <- SLAs + (SLA_B - SLAs) * exp(f1_SLA * df_SLAtrans[i,"LAI"] + f2_SLA)
+     df_SLAtrans[i, "SLA"] <- min(df_SLAtrans[i-1, "SLA"], SLAw)
+   } else {
+     # phase where shading dominates SLA (equates LAI~2)
+     df_SLAtrans[i, "SLA"] <- SLAs
+   }
+  
+}
+ 
+
+ggplot(data = df_SLAtrans) +
+  geom_line(aes(x = LAI, y = SLA), size=2) +
+  labs(x = "Leaf area index [m^2 m^-2]", y = "SLA [cm^2 g^-1]") +
+  theme_bw(base_size = 20) +
+  scale_y_continuous(limits = c(100, 300))
+
+```
+
+## Leaf number
+
+The leaf number (LN) on the main stem is calculated from the cumulative phyllochrons (CUMPH) since emergence and the phyllochron interval (PHINT) according to the following equations:
+
+$$CUMPH = T_{eff} / PHINT$$ {#eq-CUMPH}
+
+$$LN = trunc( CUMPH + 1 )$$ {#eq-LN}
+
+where $T_{eff}$ is the effective temperature, $PHINT$ is the phyllochron interval, and $LN$ is the leaf number on the main stem. The value of $PHINT$ is set to 91.74 \[°Cd\] in the model (see @eq-dBBCH_dt_GS1 and @johnen2012).
+
+## Leaf growth
+
+The leaf area is calculated on a leaf age class level, thereby the leaf number on the main stem is giving the age classes. This approach is basically from CERES-Wheat. Basically, only the youngest leaf age class is growing. This approach allows to implement a simple approach for leaf senescence, which is based on the leaf age. The growth rate of the leaf area of the youngest leaf class is calculated from the sum of the existing leaf dry matter of the leaf (LFWT~pl~) plus the daily dry matter growth rate of the leaf fraction of a single plant (GROLF) times the specific leaf area (SLA) minus the existing leaf area for that leaf age class (sumplsc):
+
+$$\frac{dPLSC_i}{dt} = PLSCGR_i= (PLSC_i + GROLF) \cdot SLA - PLSC_{sum}$$ {#eq-PLSCGR}
 
 ## Senescence
+
+Leaf senescence is governed by different factors in HumeWheat:
+
+-   age
+-   drought stress
+-   nitrogen stress
+-   light availability and also the EC stage of the crop
+
+### Age
+
+
+#### CERES algorithm for leaf senescence in early stages (BBCH 10-30)
+
+The model includes the option to simulate leaf senescence in the early stages of the crop according to the CERES-Wheat approach. 
+This algorithm, however, was not evaluated for own data sets and the leaf area simulation may perform better if this option is set to false.
+
+The 5th oldest leaf fraction dies within one phyllochron interval. First the leaf area of the oldest leaf fraction is fixed as a potential senescence rate when four younger leaves are present:
+
+$$senratesLA[trunc(LN)-4] = PLSC[trunc(LN)-4]$$ {#eq-senratesLA}
+
+Then the leaf loss rate of that leaf age fraction is calculated from the leaf area of this fraction at the beginning of the senescence process and the fraction of the leaf fraction of the effective temperature (T~eff~) and the phyllochron interval (PHINT):
+
+$$PLALR_a = min(\frac { PLSC[trunc(LN) - 4]} {dt}, senratesLA[trunc(LN) - 4] * T_{eff} / (PHINT))$$ {#eq-PLALR}
+
+where $PLSC$ is the leaf area of the leaf age class, $T_{eff}$ is the effective temperature, $PHINT$ is the phyllochron interval, and $PLALR_a$ is the leaf area loss rate due to age.
+
+#### Leaf senescence in later stages (BBCH 31-71)
+
+In later stages the leaf senescence is calculated as a fraction of the existing leaf area per plant, the effective day temperature and a stage specific parameter.
+(see https://nowlin.css.msu.edu/wheat_book/CHAPTER2.html)
+
+For ISTAGE 2 and 4 (BBCH 30-57, see @tbl-CWDevStages), the equation is:
+
+$$PLALR_a = PSENLeaf_1 \cdot T_{eff} \cdot GPLA$$ {#eq-PLALRa1}
+
+and similarly at ISTAGE 5 (BBCH 58-71):
+
+$$PLALR_a = PSENLeaf_2 \cdot T_{eff} \cdot GPLA$$ {#eq-PLALRa2}
+
+where $PSENLeaf_1$ is a parameter of the regression equation. 
+
+The parameters values $PSENLeaf_2$ and $GPLA$ have defaults of 0.0003 and 0.0006 [$cm^2 \cdot °Cd^{-1}$] in the model.
+
+
+
+### Drought stress
+
+The base for the calculation of the drought stress is a moving average of the relative TranspirationInterception ratio, i.e. the ratio of the sum of the actual transpiration and interception to the sum of potential transpiration and interception.
+
+If this average ratio (TransIntRatio~even~) and the actual TransIntRatio are smaller than a threshold value (TR~crit~) drought stress induced leaf senescence is calculated. The threshold value is set to 0.62 in the model. This means that drought stress induced leaf senescence occurs if the average *and* the actual ratio of actual to potential transpiration+interception is smaller than 0.62.
+
+In a next step a sustainable leaf area index (LAI~s~) is calculated which gives a ratio of the sum of actual transpiration + interception to the sum of potential transpiration to interceptionn equals the value of TR~crit~.
+
+The daily senescence rate due to drought stress then is calculated from the difference of the actual LAI and the sustainable LAI multiplied with the TransIntRatio divided by 15 (days) times the TransIntRatio~even~ and divided by the number of plants per m^2^, thereby the factor 1e4 converts m^2^ to cm^2^
+
+
+
+$$PLALR_d = max\left( 0, \frac{LAI - LAIs} {15} \cdot TransIntRatio_{even} \cdot 1e4 \cdot \frac{1}{plants} \right)$$ {#eq-PLALRd}
+
+where $LAI$ is the leaf area index, $LAIs$ is the sustainable leaf area index, $TransIntRatio_{even}$ is the moving average of the relative transpiration interception ratio, and $plants$ is the number of plants per square meter.
+
+The sustainable leaf area index is derived from an iterative, numerical solution using the Newton method for solving non-linear equations. 
+
+### Nitrogen stress / nitrogen induced leaf senescence 
+
+The algorithm for nitrogen stress induced leaf senescence is based on the specific leaf nitrogen concentration (SLN) and the critical specific leaf nitrogen concentration (SLNtot~crit~). The daily senescence rate due to nitrogen stress is calculated from the difference of the actual LAI and the sustainable LAI multiplied with the ratio of the specific leaf nitrogen concentration to the critical specific leaf nitrogen concentration:
+
+$$PLALR_n = min\left( LAImax \cdot \frac{PLALR_{max}} {100}, LAI \cdot \left( 1 - \frac{SLN} {SLNtot_{crit}} \right) \right) \cdot \frac{1e4}{plants}$$ {#eq-PLALRn}
+
+where $LAImax$ is the maximum leaf area index, $PLALR_{max}$ is the maximum leaf area index loss rate [%], standard value is 5%, $SLN$ is the specific leaf nitrogen concentration [g/m^2^ leaf], $SLNtot_{crit}$ is the critical specific leaf nitrogen concentration (default 0.8) , and $plants$ is the number of plants per square meter. The factor 1e4 converts m^2^ to cm^2^.
+This algorithm also induces the leaf senescence during ripening.
+
+Alternatively, the classical leaf senecescence calculation from the CERES-Wheat model can be used. With this algorithm, the leaf area decline during ripening is controlled by the accumulated temperaturs sum during ISTAGE 5:
+
+$$PLALR_n = GPLA \cdot 2 \cdot SUMDTT_5 \cdot \frac { T_{eff}}{TSum_{GF}^2} $$ {#eq-PLALRn_v2}
+
+where $GPLA$ is the leaf area per plant, $SUMDTT5$ is the accumulated temperature sum during ISTAGE 5, $T_{eff}$ is the temperature sum increment, and $TSum_{GF}^2$ is the value of unscaled parameter P5, giving the length of the grain filling period in degree days. The default value of $P5$ is set to 11.67 in the model. According to the equation @eq-TSumGF the equivalent value of $TSum_{GF}$ is `r 430+11.67*20` [°Cd].
+
+
+
+### Light limitation
+
+The light dependent leaf senescence is calculated from the leaf area index if the 10 day average of radiation (PAR~av~) [MJ^.^m^-2.^d^-1^] is falling below a threshold value named I~crit~. The threshold value is set to 1 [MJ^.^m^-1.^d^-1^] in the model.
+
+Light dependent senescence only occurs between BBCH 31 and 39, the latter value is, however, a parameter describing the end of leaf growth (EClgend).
+
+
+
+The daily senescence rate due to light limitation is calculated from the difference of the actual LAI and the sustainable LAI multiplied with the radiation sum divided by 10 days and divided by the number of plants per m^2^, thereby the factor 1e4 converts m^2^ to cm^2^
+
+In a first step a sustainable leaf area index (LAI~s~) is calculated, which depends on the radiation sum and the critical radiation sum (I~crit~) according to the following equation:
+
+$$ LAI_s = \frac{ln(I_{crit}) - ln(PAR_{av})} {-k_{PAR}}$$ {#eq-LAIs}
+
+where $Icrit$ is the critical radiation sum, $PAR_{av}$ is the 10 day average of photosynthetically active radiation, and $k_{PAR}$ is the extinction coefficient for PAR radiation. The default value of $kPAR$ is set to 0.7 in the model.
+
+
+## Combined senescence
+
+In order to combine the different senescence processes the maximum of either the maximum of age ord drought senescence or the maximum of nitrogen or light dependent senescence rate is calculated. In total the senescence rate is not larger than the leaf area per plant:
+
+
+$$    PLALR = min \left( \frac{LAI*1e4}{plants}, max\left(max\left(PLALR_a,PLALR_d\right),
+                    max\left(PLALR_n, PLALR_l\right) \right)\right)
+$$ {#eq-PLALR}
+
+The algorithms for leaf area senescence are mainly taken from other models like Ceres-Wheat or I_Wheat . A stringent validation has not yet been performed.
 
 # Evapotranspiration
 

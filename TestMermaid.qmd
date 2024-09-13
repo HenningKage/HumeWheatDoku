@@ -1,0 +1,34 @@
+---
+title: "TestMermaid"
+format: html
+editor: visual
+---
+
+## Mermaid
+
+
+Test
+
+```{mermaid}
+%%| fig-cap: Calculation of daily dry matter production in HUMEWheat. 
+%%| fig-align: center
+%%| label: fig-Modelscheme
+%%| ref-label: Modelscheme
+
+flowchart LR
+  A(LUE<sub>eff</sup>) -.-> F
+  C(f<sub>T</sup>) -.-> A
+  D(SWDF) -.-> A
+  E(Q) --> F{dW/dt}
+  G(I) --> E
+  H(f<sub>int</sub>) -.-> E
+  I(LAI) -.-> H
+  J((LUE<sub>pot</sub>)) -.-> A
+  K(f<sub>SLN</sub>) -.-> A
+  L(SLN) -.-> K
+  M(f<sub>CO2</sub>) -.-> A
+  N(CO<sub>2</sub>) -.-> M
+  O(CWSI) -.-> M
+  
+
+```
