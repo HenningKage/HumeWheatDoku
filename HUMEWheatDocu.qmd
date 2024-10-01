@@ -135,7 +135,6 @@ $$k = \frac {P1V+0.55}{183}$$ {#eq-kfromP1V} For a larger number of wheat cultiv
 
 ```{r}
 #| label: fig-VernRate
-#| ref-label: VernRateplot
 #| fig-cap: Relative vernalisation rate of winter wheat as a function of accumulated vernalisation days
 #| fig-align: center
 #| echo: false
@@ -184,7 +183,6 @@ Typical values of P1D are in the range of 1 to 3. Higher values of P1D indicate 
 
 ```{r}
 #| label: fig-PhotRate
-#| ref-label: PhotRateplot
 #| fig-cap: Relative development rate of winter wheat at GS1 as a function of photoperiod
 #| fig-align: center
 #| echo: false
@@ -300,10 +298,9 @@ $$\frac{dBBCH}{dt}=(9+(GS-6))\cdot 10-BBCH$$ {#eq-dBBCH_dt_GS6}
 The daily dry matter accumulation ($\frac{d{W_{tot}}}{dt}$) of the canopy is calculated according to the LUE approach, using the simple *big-leaf* canopy model. Within the source code the term *carbo* is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE~pot~). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO~2~ concentration of the atmosphere as described in the following sections.
 
 ```{mermaid}
+%%| label: fig-Modelscheme
 %%| fig-cap: Calculation of daily dry matter production in HUMEWheat. 
 %%| fig-align: center
-%%| label: fig-Modelscheme
-%%| ref-label: Modelscheme
 
 flowchart LR
   A(LUE<sub>eff</sup>) -.-> F
@@ -335,7 +332,6 @@ where k~ini~ is the initial extinction coefficient and k~dec~ is the extinction 
 
 ```{r}
 #| label: fig-kPAR
-#| ref-label: kPARplot
 #| fig-cap: Extinction coefficient kPAR as a function of LAI
 #| fig-align: center
 #| echo: false
@@ -385,7 +381,6 @@ with $$\alpha = \frac{  ln(2)}{ln((T_{max}-T_{min})/(T_{opt}-T_{min}))}$$ {#eq-f
 
 ```{r}
 #| label: fig-fT_WangEngel
-#| ref-label: fTplot
 #| fig-cap: Temperature limitation factor fT as a function of mean daily temperature
 #| fig-align: center
 #| echo: false
@@ -429,7 +424,6 @@ The value of pSWDF thereby defines the non-linearity of the relation between RT 
 
 ```{r}
 #| label: fig-SWDF
-#| ref-label: SWDFplot
 #| fig-cap: Relation between RT and SWDF for different values of pSWDF
 #| fig-align: center
 #| echo: false
@@ -470,7 +464,6 @@ The values of the parameters $SLN_{crit_{int}}$ and $SLN_{crit_{inc}}$ are set t
 
 ```{r}
 #| label: fig-SLNcrit
-#| ref-label: SLNcritplot
 #| fig-cap: Critical SLN value SLNcrit as a function of GAI
 #| fig-align: center
 #| echo: false
@@ -519,7 +512,6 @@ The name of the variable Carbo~red~ is derived from the original CERES-Wheat sou
 
 ```{r}
 #| label: fig-CarboRed
-#| ref-label: CarboRedplot
 #| fig-cap: Carbohydrate reduction factor CarboRed as a function of SLNI
 #| fig-align: center
 #| echo: false
@@ -563,7 +555,6 @@ The crop water stress index is calculated from 1-TransIntRatio (0 = no drought s
 
 ```{r}
 #| label: fig-fCO2eff
-#| ref-label: fCO2effplot
 #| fig-cap: CO2 effect factor fCO2 as a function of CO2 concentration and SWDF
 #| fig-align: center
 #| echo: false
@@ -702,7 +693,6 @@ $$f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n))$$
 
 ```{r}
 #| label: fig-fStem
-#| ref-label: fStemplot
 #| fig-cap: Stem fraction of shoot dry matter increase as a function of leaf dry matter and NNI (left) and as a function of leaf dry matter and psi_root (right)
 #| fig-align: center
 #| echo: false
@@ -842,7 +832,6 @@ where $Nc_{Leaf_{Vf1}}$ and $Nc_{Leaf_{Vf2}}$ are parameters of the linear relat
 
 ```{r}
 #| label: fig-NcLeaf
-#| ref-label: NcLeafplot
 #| fig-cap: Leaf nitrogen concentration under optimal N supply as a function of leaf dry matter
 #| fig-align: center
 #| echo: false
@@ -882,7 +871,6 @@ $$NearOptNCStem = 0.98 \cdot (1 / (NcStem_a + NcStem_b \cdot STMWT_{m2}))$$
 
 ```{r}
 #| label: fig-NcStem
-#| ref-label: NcStemplot
 #| fig-cap: Stem nitrogen concentration as a function of stem dry matter
 
 NcStem <- function(STMWT, NcStem_a, NcStem_b){
@@ -947,19 +935,19 @@ A common approach is to assume grain growth as a function of biomass accumulatio
 
 $$
 HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}}+\Delta W} 
-$$ {eq-HI1}
+$$ {#eq-HI1}
 
 The shoot mass accumulation is the product of the average amount of intercepted light (avL) times the average light use efficiency (avLUE) over the period of spike growth($\Delta t$)
 
-$$\Delta W=\Delta t\times avL\times avLUE$$ {eq-DeltaW}
+$$\Delta W=\Delta t\times avL\times avLUE$$ {#eq-DeltaW}
 
 whereby $\Delta t$ is the duration of the spike growth phase in thermal time (dtt) divided by the average temperature during this period (avT):
 
-$$\Delta t=\frac{dtt}{avT}$$ {eq-DeltaT}
+$$\Delta t=\frac{dtt}{avT}$$ {#eq-DeltaT}
 
 Insertion of @eq-HI1 into @eq-DeltaT yields:
 
-$$\Delta W=\frac{dtt\cdot avL\cdot avLUE}{avT}=avQ\cdot avLUE\cdot dtt$$ {eq-DeltaW2}
+$$\Delta W=\frac{dtt\cdot avL\cdot avLUE}{avT}=avQ\cdot avLUE\cdot dtt$$ {#eq-DeltaW2}
 
 whereby avQ is photo-thermal-quotient \[MJ.°C-1\], defined as the ratio of mean global radiation and mean temperature over the period of $\Delta t$.
 
@@ -967,7 +955,7 @@ whereby avQ is photo-thermal-quotient \[MJ.°C-1\], defined as the ratio of mean
 
 Assuming dtt and avLUE as constant, variation in HI is a function of W0 and avQ only. In unstressed crops the variation in W0 is small compared to the variation of $\Delta W$, which is more influenced by water limitation. Thus, the potential HI (HI~pot~) is dominated by avQ. Following this reasoning, the potential HI in HumeWheat is calculated as a function of photo-thermal-quotient avQHI \[MJ.°C-1\] defined as the running ratio of mean global radiation and mean temperature over the period between booting and mid of milk ripe stage (BBCH 50-75):
 
-$$HI_{pot}(t)=H{{I}_{\operatorname{int}}}+H{{I}_{inc}}\times av{{Q}_{HI}}(t)$$ {eq-HIpot}
+$$HI_{pot}(t)=H{{I}_{\operatorname{int}}}+H{{I}_{inc}}\times av{{Q}_{HI}}(t)$$ {#eq-HIpot}
 
 where $HI_{int}$ and $HI_{inc}$ are parameters of the regression equation. The default values of $HI_{int}$ and $HI_{inc}$ are set to 0.196 and 0.2786 in the model.
 
@@ -1116,7 +1104,6 @@ where $a_{SLA}$ and $b_{SLA}$ are parameters of the regression equation. The def
 
 ```{r}
 #| label: fig-SLA
-#| ref-label: SLAplot
 #| fig-cap: Specific leaf area as a function of leaf area index
 #| fig-align: center
 #| echo: false
@@ -1157,7 +1144,6 @@ An example for the result of this algorithm is given in @fig-SLAtrans.
 
 ```{r}
 #| label: fig-SLAtrans
-#| ref-label: SLAtransplot
 #| fig-cap: Specific leaf area as a function of leaf area index
 #| fig-align: center
 #| echo: false
