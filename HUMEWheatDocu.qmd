@@ -906,7 +906,7 @@ The model for grain number follows the assumption that the grain number per squa
 
 $$GPSM= G4\cdot ln \left( DM_{65} \cdot min \left( NNI_{60}\right) \cdot Q45 \right)^{a}$$ {#eq-GPSM}
 
-where GM4 is a parameter of the regression equation. The default values of G4 and a are set to149.153 and 2.6233 in the model (see @fig-GPSM). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_a. See [@ratjen2012] for the derivation of this approach .
+where G4 and a are parameters of the regression equation. The default values of G4 and a are set to 149.153 and 2.6233 in the model (see @fig-GPSM). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_2. See [@ratjen2012] for the derivation of this approach .
 
 ![Relationship between the log transformed product of different plant parameters (NNI60 = N nutrition status of wheat crops at anthesis, Q45= the photo thermal quotient 45 d preceding anthesis, DM65 = total shoot dry matter per square meter at anthesis) and grain number per square meter (GPSM) of wheat crops from field experiments with different N fertilizations from [@ratjen2012].](GPSM_regression.png){#fig-GPSM}
 
@@ -914,9 +914,9 @@ For the estimation of grains per plant in order to calculate the initial value o
 
 if (EC \>= 40) and (NNI60 \<= 0) and if $ln(TOPWT_{m2} \cdot Q45) > 0$ then
 
-$$GPPVAR = \left ( GM4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{GM4_2} \right) / plants$$ {#eq-GPPVAR}
+$$GPPVAR = \left ( G4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{a} \right) / plants$$ {#eq-GPPVAR}
 
-where GM4\~2 is a parameter of the regression equation. The default value of GM4\~2 is set to 0.0001 in the model.
+where G4 and a are parameters of the regression equation. Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_2.
 
 ### Initialisation
 
@@ -957,7 +957,7 @@ Assuming dtt and avLUE as constant, variation in HI is a function of W0 and avQ 
 
 $$HI_{pot}(t)=H{{I}_{\operatorname{int}}}+H{{I}_{inc}}\times av{{Q}_{HI}}(t)$$ {#eq-HIpot}
 
-where $HI_{int}$ and $HI_{inc}$ are parameters of the regression equation. The default values of $HI_{int}$ and $HI_{inc}$ are set to 0.196 and 0.2786 in the model.
+where $HI_{int}$ and $HI_{inc}$ are parameters of the regression equation. The default values of $HI_{int}$ and $HI_{inc}$ are set to 0.2786 and 0.196 in the model.
 
 ![Potential harvest index as a function of the quotient of cumulative radiation to temperature sum during grain filling where $QHI_{INC}$ and $QHI_{INT}$ are parameters of the regression equation. The default values of $QHI_{INC}$ and $QHI_{INT}$ are set to 0.196 and 0.2786 in the model.](HI_regression.png){fig-align="center"}
 

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.547">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Agronomy and Crop Science Group, Kiel University">
-<meta name="dcterms.date" content="2024-10-01">
+<meta name="dcterms.date" content="2025-02-26">
 
 <title>Simulation of Wheat Growth and Development</title>
 <style>
@@ -35,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -94,7 +94,7 @@ div.csl-indent {
 <script src="HUMEWheatDocu_files/libs/quarto-diagram/mermaid-init.js"></script>
 <link href="HUMEWheatDocu_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -109,7 +109,7 @@ div.csl-indent {
    });
 }}});
   </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css">
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -231,7 +231,7 @@ window.Quarto = {
   </ul>
 </nav>
 </div>
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -254,7 +254,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 1, 2024</p>
+      <p class="date">February 26, 2025</p>
     </div>
   </div>
   
@@ -277,13 +277,13 @@ p {
 <section id="development" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Development</h1>
 <p>The phenological model module of HumeWheat is based on phenological Ceres Wheat (CW) model for winter wheat. It has been published originally in <span class="citation" data-cites="johnen2012">(<a href="#ref-johnen2012" role="doc-biblioref">Johnen et al., 2012a</a>)</span>. The phenological process in CW is divided into nine developmental or growth stages (GS) according to <span class="citation" data-cites="ritchie2015">(<a href="#ref-ritchie2015" role="doc-biblioref">RITCHIE, 2015</a>)</span> (<a href="#tbl-CWDevStages" class="quarto-xref">Table&nbsp;1</a>), the common approach in Europe, however is the BBCH stage <span class="citation" data-cites="lancashire1991a">(<a href="#ref-lancashire1991a" role="doc-biblioref">LANCASHIRE et al., 1991</a>)</span>. Zadoks stages or equivalent BBCH values, however, are not calculated in the original phenology model of CERES-Wheat up to Version 3.0.</p>
-<div id="tbl-CWDevStages" class="quarto-float anchored">
+<div id="tbl-CWDevStages" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-CWDevStages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH stages
 </figcaption>
 <div aria-describedby="tbl-CWDevStages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 26%">
 <col style="width: 26%">
@@ -373,7 +373,7 @@ Table&nbsp;1: Development stages of the CW model (GS) and corresponding BBCH sta
 <section id="vernalisation" class="level4" data-number="1.1.2.1">
 <h4 data-number="1.1.2.1" class="anchored" data-anchor-id="vernalisation"><span class="header-section-number">1.1.2.1</span> Vernalisation</h4>
 <p>The effect of vernalisation on the development rate is calculated from the accumulated sum of “vernalisation days”. The rate of change of the vernalisation days is calculated from the daily mean temperature and a vernalisation response function which is characterized by 4 cardinal temperatures (<a href="#fig-RelVernalisation" class="quarto-xref">Figure&nbsp;1</a>).</p>
-<div id="fig-RelVernalisation" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-RelVernalisation" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-RelVernalisation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="RelVernalisation.png" class="img-fluid figure-img">
@@ -392,7 +392,7 @@ The value k is the slope of the linear relation between the vernalisation days a
 <p><span id="eq-kfromP1V"><span class="math display">k = \frac {P1V+0.55}{183} \tag{8}</span></span> For a larger number of wheat cultivars in Germany <span class="citation" data-cites="johnen2012b">(<a href="#ref-johnen2012b" role="doc-biblioref">Johnen et al., 2012b</a>)</span> found a value of P1V of 2.84. Higher values of P1V indicate a higher vernalisation requirement of the cultivar, i.e.&nbsp;a lower development rate at low vernalisation days which is typical for cultivars of continental origin. A low value of P1V indicates a low vernalisation requirement, typical for summer crops of wheat or for wheat cultivars grown in Mediterranean regions.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-VernRate" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-VernRate" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-VernRate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-VernRate-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -414,7 +414,7 @@ Figure&nbsp;2: Relative vernalisation rate of winter wheat as a function of accu
 <p>Typical values of P1D are in the range of 1 to 3. Higher values of P1D indicate a higher photoperiod requirement of the cultivar, i.e.&nbsp;a lower development rate at low photoperiods which is typical for cultivars of northern origin. A low value of P1D indicates a low photoperiod requirement, typical for summer crops of wheat or for wheat cultivars grown in mediterranean regions. In the study of <span class="citation" data-cites="johnen2012a">(<a href="#ref-johnen2012a" role="doc-biblioref">Johnen et al., 2012c</a>)</span> a value of P1D of 2.76 was found as a mean for a larger number of wheat cultivars in Germany.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-PhotRate" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-PhotRate" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-PhotRate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-PhotRate-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -487,7 +487,7 @@ Figure&nbsp;3: Relative development rate of winter wheat at GS1 as a function of
 <p>The daily dry matter accumulation (<span class="math inline">\frac{d{W_{tot}}}{dt}</span>) of the canopy is calculated according to the LUE approach, using the simple <em>big-leaf</em> canopy model. Within the source code the term <em>carbo</em> is used to denote the daily growth rate. The potential daily dry matter accumulation rate is a function of intercepted PAR multiplied with the potential light use efficiency LUE<sub>pot</sub>). LUE is affected by extremes of daily mean temperature, water limitation, nitrogen concentration of the canopy and the external CO<sub>2</sub> concentration of the atmosphere as described in the following sections.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-Modelscheme" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-Modelscheme" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-Modelscheme-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
@@ -525,7 +525,7 @@ Figure&nbsp;4: Calculation of daily dry matter production in HUMEWheat.
 <p>where k<sub>ini</sub> is the initial extinction coefficient and k<sub>dec</sub> is the extinction coefficient decrease per unit of LAI. The standard extinction coefficient (k<sub>PAR</sub>max) is set to 0.7 in the model.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-kPAR" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-kPAR" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-kPAR-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-kPAR-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -552,7 +552,7 @@ Figure&nbsp;5: Extinction coefficient kPAR as a function of LAI
 <p>with <span id="eq-fT_WangEngel_alpha"><span class="math display">\alpha = \frac{  ln(2)}{ln((T_{max}-T_{min})/(T_{opt}-T_{min}))} \tag{29}</span></span> For <a href="#fig-fT_WangEngel" class="quarto-xref">Figure&nbsp;6</a> the parameters Tmin = 0°C, Topt = 20°C and Tmax = 35°C were used.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-fT_WangEngel" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-fT_WangEngel" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fT_WangEngel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-fT_WangEngel-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -575,7 +575,7 @@ Figure&nbsp;6: Temperature limitation factor fT as a function of mean daily temp
 <p>The value of pSWDF thereby defines the non-linearity of the relation between RT and SWDF. The value of pSWDF is set to 2.5 in the model. <a href="#fig-SWDF" class="quarto-xref">Figure&nbsp;7</a> shows the relation between RT and SWDF for different values of pSWDF.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-SWDF" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-SWDF" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SWDF-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-SWDF-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -596,7 +596,7 @@ Figure&nbsp;7: Relation between RT and SWDF for different values of pSWDF
 <p>The values of the parameters <span class="math inline">SLN_{crit_{int}}</span> and <span class="math inline">SLN_{crit_{inc}}</span> are set to 3.74 and -0.228, respectively <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>. The value of <span class="math inline">SLN_{crit_{int}}</span> is the initial SLN value at GAI = 0. The value of <span class="math inline">SLN_{crit_{inc}}</span> is the increase of the SLN<sub>crit</sub> value per unit of GAI.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-SLNcrit" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-SLNcrit" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SLNcrit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-SLNcrit-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -609,7 +609,7 @@ Figure&nbsp;8: Critical SLN value SLNcrit as a function of GAI
 </div>
 </div>
 <p>The <a href="#fig-SLN_GAI" class="quarto-xref">Figure&nbsp;9</a> from <span class="citation" data-cites="ratjen2015a">RATJEN and KAGE (<a href="#ref-ratjen2015a" role="doc-biblioref">2015b</a>)</span> gives the original source of this relationship derived from an analysis of experimental data using quartile regression.</p>
-<div id="fig-SLN_GAI" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-SLN_GAI" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SLN_GAI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="SLN_GAI.gif" class="img-fluid figure-img">
@@ -626,7 +626,7 @@ Figure&nbsp;9: Relationship between maximum overall specific leaf nitrogen (SLN:
 <p><span id="eq-CarboRed"><span class="math display">Carbo_{red} = min\left(1, max \left(0, SLNI_a. + SLNI_b \cdot SLNI + SLNI_c \cdot SLNI^2 \right)\right) \tag{34}</span></span></p>
 <p>The values of the parameters SLNI<sub>a</sub>, SLNI<sub>b</sub> and SLNI<sub>c</sub> are set to -0.197, 2.8 and -1.6, respectively <span class="citation" data-cites="ratjen2015a">(<a href="#ref-ratjen2015a" role="doc-biblioref">RATJEN and KAGE, 2015b</a>)</span>. The value of SLNI<sub>a</sub> is the intercept of the Carbo<sub>red</sub> function. The value of SLNI<sub>b</sub> is the slope of the Carbo<sub>red</sub> function. The value of SLNI<sub>c</sub> is the curvature of the Carbo<sub>red</sub> function. The Carbo<sub>red</sub> function is shown in <a href="#fig-CarboRed" class="quarto-xref">Figure&nbsp;11</a>.<br>
 The name of the variable Carbo<sub>red</sub> is derived from the original CERES-Wheat source code where it is primarily used to calculate the reduction of the photosynthesis during ripening/senescence. We use it here to calculate the general reduction of the LUE due to nitrogen limitation.</p>
-<div id="fig-rLUE_SLNI" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-rLUE_SLNI" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rLUE_SLNI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="rLUE_SLNI.png" class="img-fluid figure-img">
@@ -638,7 +638,7 @@ Figure&nbsp;10: Relationship between relative light use efficiency and the index
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-CarboRed" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-CarboRed" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-CarboRed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-CarboRed-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -660,7 +660,7 @@ Figure&nbsp;11: Carbohydrate reduction factor CarboRed as a function of SLNI
 <p>The crop water stress index is calculated from 1-TransIntRatio (0 = no drought stress, 1 = maximum drought stress). The interaction of CWSI and CO<sub>2</sub> concentration is described by the parameter f<sub>CWSI</sub>. The parameter f<sub>CO</sub>2~scale is the CO<sub>2</sub> effect factor at the CO<sub>2</sub> concentration of the compensation point (<span class="math inline">\tau</span>). The parameter f<sub>CO</sub>2~ is the slope of the CO<sub>2</sub> effect factor curve. The parameter <span class="math inline">\tau</span> is the CO<sub>2</sub> concentration at which the CO<sub>2</sub> effect factor is equal to f<sub>CO</sub>2~scale. The CO<sub>2</sub> effect factor is limited to a value between 0 and 1. It follows from <a href="#fig-fCO2eff" class="quarto-xref">Figure&nbsp;12</a> that the CO<sub>2</sub> effect factor increases with increasing CO<sub>2</sub> concentration and increasing CWSI, which means that the effect of CO<sub>2</sub> on LUE is stronger under drought stress conditions.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-fCO2eff" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-fCO2eff" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fCO2eff-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-fCO2eff-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -720,7 +720,7 @@ Figure&nbsp;12: CO2 effect factor fCO2 as a function of CO2 concentration and SW
 <section id="drought-effects" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="drought-effects"><span class="header-section-number">3.3.1</span> Drought effects</h3>
 <p>The partitioning of dry matter between leaf and stem is influenced by the soil water potential. Under water stress conditions the partitioning of dry matter to the stem is increased (<a href="#fig-AlloDrought" class="quarto-xref">Figure&nbsp;13</a>).</p>
-<div id="fig-AlloDrought" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-AlloDrought" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-AlloDrought-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="jac12165-fig-0002-m.jpg" class="img-fluid figure-img">
@@ -747,7 +747,7 @@ Figure&nbsp;13: Relationship between the log-transformed leaf [ln(DML)] and stem
 <p><span class="math display">f_{stem} = min(1, \ f_{Stem*} \cdot max(kf_d, \ kf_n))</span></p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-fStem" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-fStem" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fStem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-fStem-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -798,7 +798,7 @@ Figure&nbsp;14: Stem fraction of shoot dry matter increase as a function of leaf
 <p>where <span class="math inline">Nc_{Leaf_{Vf1}}</span> and <span class="math inline">Nc_{Leaf_{Vf2}}</span> are parameters of the linear relationship between leaf nitrogen concentration and leaf dry matter. The default values of <span class="math inline">Nc_{Leaf_{Vf1}}</span> and <span class="math inline">Nc_{Leaf_{Vf2}}</span> are set to -0.0061 and 5.9543 in the model.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-NcLeaf" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-NcLeaf" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-NcLeaf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-NcLeaf-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -840,7 +840,7 @@ Figure&nbsp;15: Leaf nitrogen concentration under optimal N supply as a function
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"yellow"</span>, <span class="at">high =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="fig-NcStem" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-NcStem" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-NcStem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-NcStem-1.png" class="img-fluid figure-img" width="672">
@@ -860,8 +860,8 @@ Figure&nbsp;16: Stem nitrogen concentration as a function of stem dry matter
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="grain-number"><span class="header-section-number">3.6.1</span> Grain number</h3>
 <p>The model for grain number follows the assumption that the grain number per square meter (GPSM) is a function of the shoot dry matter at mid flowering i.e.&nbsp;EC65 (DM~65), the nitrogen nutrition index at EC 60 (NNI~60), and the average photothermal quotient from 45 d preceding anthesis (Q45):</p>
 <p><span id="eq-GPSM"><span class="math display">GPSM= G4\cdot ln \left( DM_{65} \cdot min \left( NNI_{60}\right) \cdot Q45 \right)^{a} \tag{59}</span></span></p>
-<p>where GM4 is a parameter of the regression equation. The default values of G4 and a are set to149.153 and 2.6233 in the model (see <a href="#fig-GPSM" class="quarto-xref">Figure&nbsp;17</a>). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_a. See <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span> for the derivation of this approach .</p>
-<div id="fig-GPSM" class="quarto-figure quarto-figure-center quarto-float anchored">
+<p>where G4 and a are parameters of the regression equation. The default values of G4 and a are set to 149.153 and 2.6233 in the model (see <a href="#fig-GPSM" class="quarto-xref">Figure&nbsp;17</a>). Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_2. See <span class="citation" data-cites="ratjen2012">(<a href="#ref-ratjen2012" role="doc-biblioref">Ratjen et al., 2012</a>)</span> for the derivation of this approach .</p>
+<div id="fig-GPSM" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-GPSM-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="GPSM_regression.png" class="img-fluid figure-img">
@@ -873,8 +873,8 @@ Figure&nbsp;17: Relationship between the log transformed product of different pl
 </div>
 <p>For the estimation of grains per plant in order to calculate the initial value of grain N an early estimate of GPSM is derived from the shoot dry matter at anthesis (TOPWT_m2) and the photothermal quotient 45 d preceding anthesis (Q45):</p>
 <p>if (EC &gt;= 40) and (NNI60 &lt;= 0) and if <span class="math inline">ln(TOPWT_{m2} \cdot Q45) &gt; 0</span> then</p>
-<p><span id="eq-GPPVAR"><span class="math display">GPPVAR = \left ( GM4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{GM4_2} \right) / plants \tag{60}</span></span></p>
-<p>where GM4~2 is a parameter of the regression equation. The default value of GM4~2 is set to 0.0001 in the model.</p>
+<p><span id="eq-GPPVAR"><span class="math display">GPPVAR = \left ( G4 \cdot \left ( ln \left ( TOPWT_{m2} \cdot Q45 \right) \right)^{a} \right) / plants \tag{60}</span></span></p>
+<p>where G4 and a are parameters of the regression equation. Within the source code the parameter G4 ist called GM4 and the parameter a is named GM4_2.</p>
 </section>
 <section id="initialisation-1" class="level3" data-number="3.6.2">
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="initialisation-1"><span class="header-section-number">3.6.2</span> Initialisation</h3>
@@ -901,10 +901,10 @@ HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}
 <h4 data-number="3.6.3.1" class="anchored" data-anchor-id="potential-harvest-index"><span class="header-section-number">3.6.3.1</span> Potential harvest index</h4>
 <p>Assuming dtt and avLUE as constant, variation in HI is a function of W0 and avQ only. In unstressed crops the variation in W0 is small compared to the variation of <span class="math inline">\Delta W</span>, which is more influenced by water limitation. Thus, the potential HI (HI<sub>pot</sub>) is dominated by avQ. Following this reasoning, the potential HI in HumeWheat is calculated as a function of photo-thermal-quotient avQHI [MJ.°C-1] defined as the running ratio of mean global radiation and mean temperature over the period between booting and mid of milk ripe stage (BBCH 50-75):</p>
 <p><span id="eq-HIpot"><span class="math display">HI_{pot}(t)=H{{I}_{\operatorname{int}}}+H{{I}_{inc}}\times av{{Q}_{HI}}(t) \tag{67}</span></span></p>
-<p>where <span class="math inline">HI_{int}</span> and <span class="math inline">HI_{inc}</span> are parameters of the regression equation. The default values of <span class="math inline">HI_{int}</span> and <span class="math inline">HI_{inc}</span> are set to 0.196 and 0.2786 in the model.</p>
+<p>where <span class="math inline">HI_{int}</span> and <span class="math inline">HI_{inc}</span> are parameters of the regression equation. The default values of <span class="math inline">HI_{int}</span> and <span class="math inline">HI_{inc}</span> are set to 0.2786 and 0.196 in the model.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="HI_regression.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+<p><img src="HI_regression.png" class="img-fluid figure-img"></p>
 <figcaption>Potential harvest index as a function of the quotient of cumulative radiation to temperature sum during grain filling where <span class="math inline">QHI_{INC}</span> and <span class="math inline">QHI_{INT}</span> are parameters of the regression equation. The default values of <span class="math inline">QHI_{INC}</span> and <span class="math inline">QHI_{INT}</span> are set to 0.196 and 0.2786 in the model.</figcaption>
 </figure>
 </div>
@@ -944,7 +944,7 @@ HI=\frac{{{W}_{grain}}}{{{W}_{straw}}+{{W}_{grain}}}\sim\frac{\Delta W}{{{W}_{0}
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(SUMDTTGF, RHI, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"SumDTTGF [°Cd]"</span>, <span class="at">ylab =</span> <span class="st">"Relative harvest index (RHI)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="fig-RHI" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-RHI" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-RHI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-RHI-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -982,7 +982,7 @@ Figure&nbsp;18: Relative potential harvest index as a function of the cumulative
 <p>where <span class="math inline">a_{SLA}</span> and <span class="math inline">b_{SLA}</span> are parameters of the regression equation. The default values of <span class="math inline">a_{SLA}</span> and <span class="math inline">b_{SLA}</span> are set to 136.69 and 14.93 in the model (<a href="#fig-SLA" class="quarto-xref">Figure&nbsp;19</a>). See Fig. 3b in <span class="citation" data-cites="ratjen2013">(<a href="#ref-ratjen2013" role="doc-biblioref">Ratjen and Kage, 2013</a>)</span>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-SLA" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-SLA" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SLA-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-SLA-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -1001,7 +1001,7 @@ Figure&nbsp;19: Specific leaf area as a function of leaf area index
 <p>An example for the result of this algorithm is given in <a href="#fig-SLAtrans" class="quarto-xref">Figure&nbsp;20</a>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="fig-SLAtrans" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<div id="fig-SLAtrans" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-SLAtrans-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="HUMEWheatDocu_files/figure-html/fig-SLAtrans-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -1252,18 +1252,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1295,7 +1284,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1330,7 +1359,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
