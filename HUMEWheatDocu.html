@@ -880,7 +880,7 @@ Figure&nbsp;17: Relationship between the log transformed product of different pl
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="initialisation-1"><span class="header-section-number">3.6.2</span> Initialisation</h3>
 <p>The initial change of the grain weight is calculated using a sliding N and C accumulation of initial grain N &amp; C from EC 40 to 65 from the parameter <span class="math inline">GRNWT_{ini}</span> and the missing fraction of that weight. Initial grain weight per plant and the grain filling rate according to the following equation:</p>
 <p><span id="eq-GRNWTplini"><span class="math display">\frac{GRNWT_{pl}}{dt} = GRNWT_{ini} / 1000 \cdot GPPVAR \cdot min\left( 1, \frac{(EC - 40)}{ (65 - 40)}\right) - GRNWT_{pl} \tag{61}</span></span></p>
-<p>where <span class="math inline">GRNWT_{ini}</span> is the initial grain weight per plant, <span class="math inline">GPPVAR</span> is the grain filling rate, <span class="math inline">EC</span> is the EC stage. The value of <span class="math inline">GRNWT_{ini}</span> is set to 0.1 in the model. The value of <span class="math inline">GPPVAR</span> is set to 0.0001 in the model.<br>
+<p>where <span class="math inline">GRNWT_{ini}</span> is the initial grain weight per plant, <span class="math inline">GPPVAR</span> is the grain filling rate, <span class="math inline">EC</span> is the EC stage. The value of <span class="math inline">GRNWT_{ini}</span> is set to 3.5 in the model.<br>
 Because the initial weight comes from the stem fraction, the rate of change of DM stem has to be adjusted:</p>
 <p><span id="eq-STMWTpl_corr"><span class="math display">\frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - \frac{GRNWT_{pl}}{dt} \tag{62}</span></span></p>
 </section>

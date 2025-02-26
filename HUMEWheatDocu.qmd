@@ -924,7 +924,7 @@ The initial change of the grain weight is calculated using a sliding N and C acc
 
 $$\frac{GRNWT_{pl}}{dt} = GRNWT_{ini} / 1000 \cdot GPPVAR \cdot min\left( 1, \frac{(EC - 40)}{ (65 - 40)}\right) - GRNWT_{pl}$$ {#eq-GRNWTplini}
 
-where $GRNWT_{ini}$ is the initial grain weight per plant, $GPPVAR$ is the grain filling rate, $EC$ is the EC stage. The value of $GRNWT_{ini}$ is set to 0.1 in the model. The value of $GPPVAR$ is set to 0.0001 in the model.\
+where $GRNWT_{ini}$ is the initial grain weight per plant, $GPPVAR$ is the grain filling rate, $EC$ is the EC stage. The value of $GRNWT_{ini}$ is set to 3.5 in the model.\
 Because the initial weight comes from the stem fraction, the rate of change of DM stem has to be adjusted:
 
 $$\frac{STMWT_{pl}}{dt} = \frac{STMWT_{pl}}{dt} - \frac{GRNWT_{pl}}{dt}$$ {#eq-STMWTpl_corr}
